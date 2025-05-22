@@ -4,4 +4,10 @@ version = "0.1.0"
 description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.12"
-dependencies = []
+dependencies = [
+    "passlib>=1.7.4",
+    "pyqt5>=5.15.11",
+    "qtawesome>=1.4.0",
+    "rich>=14.0.0",
+    "ummalqura>=2.0.1",
+]
