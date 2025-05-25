@@ -11,6 +11,7 @@ class Database:
     def __init__(self, db_name="your_database.db"):
         self.db_name = db_name
 
+    # -- Global functions --
     def connect(self):
         """Create and return a database connection."""
         return sqlite3.connect(self.db_name)
@@ -58,6 +59,7 @@ class Database:
         result = self.fetch_all(query, [value])
         return result[0][0] if result else None
 
+    # -- Articles Page --
     def get_category_name(self, cat_id):
         query = "SELECT name FROM magasin_category WHERE cat_id = ?"
         result = self.fetch_namedtuple(query, [cat_id])
@@ -194,6 +196,58 @@ class Database:
         except sqlite3.Error as err:
             return {'success': False, 'message': str(err)}
 
+    def get_all_missing_codes(self, name):
+        """
+        Return a list of all missing article codes for a given category ID.
+
+        Parameters:
+            cat_id (int): Category ID.
+
+        Returns:
+            dict: {'success': True/False, 'missing_codes': list, 'message': str}
+        """
+        try:
+            # Get the category slug
+            category_row = self.fetch_all("SELECT cat_id FROM magasin_category WHERE name = ?", (name,))
+            if not category_row:
+                return {'success': False, 'missing_codes': [], 'message': "❌ Catégorie introuvable."}
+
+            cat_id = category_row[0][0]
+
+            # Get all codes for that category
+            code_rows = self.fetch_all("SELECT code FROM magasin_article WHERE category_id = ?", (cat_id,))
+            codes = [row[0] for row in code_rows]
+
+            existing_numbers = []
+            len_numbers = 3  # Default length of padding (e.g., 001)
+
+            for code in codes:
+                if '-' in code:
+                    parts = code.split('-')
+                    if len(parts) == 2 and parts[1].isdigit():
+                        num_part = parts[1]
+                        len_numbers = max(len_numbers, len(num_part))
+                        existing_numbers.append(int(num_part))
+
+            if not existing_numbers:
+                return {
+                    'success': True,
+                    'missing_codes': [f"{name}-{1:0{len_numbers}d}"],
+                    'message': "✅ Aucun code existant, premier code généré."
+                }
+
+            max_number = max(existing_numbers)
+            missing = [f"{name}-{i:0{len_numbers}d}" for i in range(1, max_number + 1) if i not in existing_numbers]
+
+            return {
+                'success': True,
+                'missing_codes': missing,
+                'message': f"✅ {len(missing)} codes manquants trouvés."
+            }
+
+        except Exception as e:
+            return {'success': False, 'missing_codes': [], 'message': f"❌ Erreur: {str(e)}"}
+
     # -- USERS --
     def create_user(self, username, email, password, retype_password, first_name, last_name,
                     poste_travaille, groupe, is_superuser=False):
@@ -295,9 +349,24 @@ class Database:
         except Exception as e:
             return {'success': False, 'message': f"❌ Erreur: {str(e)}"}
 
+    # -- Commande Page
+    def commande_status(self, cmd_id):
+        """
+        This function will return False if command is active
+        this behavor is used to enable or disable active status command pushButton
+        """
+        query = "SELECT status FROM magasin_command WHERE command_id = ?"
+        result = self.fetch_all(query, [cmd_id])
+        if len(result) == 0:
+            return False
+        else:
+            return False if result[0][0] == 1 else True
+
 
 if __name__ == '__main__':
     db_handler = Database('./db.sqlite3')
-    query = 'SELECT * FROM magasin_article WHERE art_id = ?'
-    result = db_handler.fetch_namedtuple(query, [3])
+    # query = 'SELECT * FROM magasin_article WHERE art_id = ?'
+    # result = db_handler.fetch_namedtuple(query, [3])
+    # print(result)
+    result = db_handler.get_all_missing_codes('BHS')
     print(result)

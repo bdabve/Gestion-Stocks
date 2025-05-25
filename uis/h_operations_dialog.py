@@ -32,12 +32,13 @@ class Ui_Dialog(object):
 "    background-color: rgb(40, 44, 52);\n"
 "}\n"
 "\n"
+"#NewCategoryPage,\n"
+"#EmptyCodePage,\n"
 "#NewArticlePage, \n"
 "#EditArticlePage,\n"
 "#EntreePage,\n"
 "#SortiePage,\n"
 "#ConfirmPage,\n"
-"#NewCategoryPage,\n"
 "\n"
 "#LoginPage,\n"
 "#NewUserPage,\n"
@@ -68,11 +69,12 @@ class Ui_Dialog(object):
 "    qproperty-alignment: AlignCenter;\n"
 "}\n"
 "\n"
+"#labelCategoryError,\n"
+"#labelEmptyCodeError,\n"
 "#labelNewError,\n"
 "#labelEditError,\n"
 "#labelEntreeError,\n"
 "#labelSortieError,\n"
-"#labelCategoryError,\n"
 "\n"
 "#labelLoginErrors,\n"
 "#labelAddUserErrors,\n"
@@ -264,6 +266,7 @@ class Ui_Dialog(object):
 "    border: 2px solid rgb(33, 37, 43);\n"
 "    padding: 5px;\n"
 "    padding-left: 10px;\n"
+"    min-width: 300px;\n"
 "}\n"
 "QComboBox:hover{\n"
 "    border: 2px solid rgb(64, 71, 88);\n"
@@ -455,6 +458,43 @@ class Ui_Dialog(object):
         spacerItem = QtWidgets.QSpacerItem(20, 408, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
         self.verticalLayout_7.addItem(spacerItem)
         self.stackedWidget.addWidget(self.NewCategoryPage)
+        self.EmptyCodePage = QtWidgets.QWidget()
+        self.EmptyCodePage.setObjectName("EmptyCodePage")
+        self.verticalLayout_14 = QtWidgets.QVBoxLayout(self.EmptyCodePage)
+        self.verticalLayout_14.setContentsMargins(5, 15, 5, 15)
+        self.verticalLayout_14.setObjectName("verticalLayout_14")
+        self.widget_2 = QtWidgets.QWidget(self.EmptyCodePage)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.widget_2.sizePolicy().hasHeightForWidth())
+        self.widget_2.setSizePolicy(sizePolicy)
+        self.widget_2.setObjectName("widget_2")
+        self.formLayout_9 = QtWidgets.QFormLayout(self.widget_2)
+        self.formLayout_9.setContentsMargins(0, 0, 0, 0)
+        self.formLayout_9.setHorizontalSpacing(20)
+        self.formLayout_9.setObjectName("formLayout_9")
+        self.label_31 = QtWidgets.QLabel(self.widget_2)
+        self.label_31.setObjectName("label_31")
+        self.formLayout_9.setWidget(0, QtWidgets.QFormLayout.LabelRole, self.label_31)
+        self.labelEmptyCodeError = QtWidgets.QLabel(self.widget_2)
+        self.labelEmptyCodeError.setObjectName("labelEmptyCodeError")
+        self.formLayout_9.setWidget(1, QtWidgets.QFormLayout.FieldRole, self.labelEmptyCodeError)
+        self.cbBoxCatEmptyCode = QtWidgets.QComboBox(self.widget_2)
+        self.cbBoxCatEmptyCode.setObjectName("cbBoxCatEmptyCode")
+        self.formLayout_9.setWidget(0, QtWidgets.QFormLayout.FieldRole, self.cbBoxCatEmptyCode)
+        self.verticalLayout_14.addWidget(self.widget_2)
+        self.plainTextEditEmptyCodeResult = QtWidgets.QPlainTextEdit(self.EmptyCodePage)
+        self.plainTextEditEmptyCodeResult.setMinimumSize(QtCore.QSize(0, 200))
+        self.plainTextEditEmptyCodeResult.setObjectName("plainTextEditEmptyCodeResult")
+        self.verticalLayout_14.addWidget(self.plainTextEditEmptyCodeResult)
+        self.btnSearchEmptyCode = QtWidgets.QPushButton(self.EmptyCodePage)
+        self.btnSearchEmptyCode.setIconSize(QtCore.QSize(25, 25))
+        self.btnSearchEmptyCode.setObjectName("btnSearchEmptyCode")
+        self.verticalLayout_14.addWidget(self.btnSearchEmptyCode)
+        spacerItem1 = QtWidgets.QSpacerItem(20, 234, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
+        self.verticalLayout_14.addItem(spacerItem1)
+        self.stackedWidget.addWidget(self.EmptyCodePage)
         self.NewArticlePage = QtWidgets.QWidget()
         self.NewArticlePage.setMinimumSize(QtCore.QSize(0, 0))
         self.NewArticlePage.setObjectName("NewArticlePage")
@@ -474,7 +514,7 @@ class Ui_Dialog(object):
         self.label_9.setObjectName("label_9")
         self.formLayout.setWidget(0, QtWidgets.QFormLayout.LabelRole, self.label_9)
         self.cbBoxCatNew = QtWidgets.QComboBox(self.formFrame)
-        self.cbBoxCatNew.setMinimumSize(QtCore.QSize(0, 31))
+        self.cbBoxCatNew.setMinimumSize(QtCore.QSize(319, 31))
         self.cbBoxCatNew.setObjectName("cbBoxCatNew")
         self.formLayout.setWidget(0, QtWidgets.QFormLayout.FieldRole, self.cbBoxCatNew)
         self.label = QtWidgets.QLabel(self.formFrame)
@@ -584,8 +624,8 @@ class Ui_Dialog(object):
         self.btnEditArticle.setIconSize(QtCore.QSize(25, 25))
         self.btnEditArticle.setObjectName("btnEditArticle")
         self.horizontalLayout_10.addWidget(self.btnEditArticle)
-        spacerItem1 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
-        self.horizontalLayout_10.addItem(spacerItem1)
+        spacerItem2 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
+        self.horizontalLayout_10.addItem(spacerItem2)
         self.btnSaveEditArticle = QtWidgets.QPushButton(self.frame)
         self.btnSaveEditArticle.setEnabled(False)
         self.btnSaveEditArticle.setMinimumSize(QtCore.QSize(49, 39))
@@ -867,8 +907,8 @@ class Ui_Dialog(object):
         self.spBoxEntreePrix.setObjectName("spBoxEntreePrix")
         self.formLayout_3.setWidget(6, QtWidgets.QFormLayout.FieldRole, self.spBoxEntreePrix)
         self.verticalLayout_3.addWidget(self.formFrame_3)
-        spacerItem2 = QtWidgets.QSpacerItem(20, 261, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
-        self.verticalLayout_3.addItem(spacerItem2)
+        spacerItem3 = QtWidgets.QSpacerItem(20, 261, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
+        self.verticalLayout_3.addItem(spacerItem3)
         self.stackedWidget.addWidget(self.EntreePage)
         self.SortiePage = QtWidgets.QWidget()
         self.SortiePage.setObjectName("SortiePage")
@@ -941,8 +981,8 @@ class Ui_Dialog(object):
         self.sortieArticleID.setObjectName("sortieArticleID")
         self.gridLayout.addWidget(self.sortieArticleID, 4, 0, 1, 1)
         self.verticalLayout_5.addWidget(self.frame_2)
-        spacerItem3 = QtWidgets.QSpacerItem(20, 304, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
-        self.verticalLayout_5.addItem(spacerItem3)
+        spacerItem4 = QtWidgets.QSpacerItem(20, 304, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
+        self.verticalLayout_5.addItem(spacerItem4)
         self.stackedWidget.addWidget(self.SortiePage)
         self.ConfirmPage = QtWidgets.QWidget()
         self.ConfirmPage.setObjectName("ConfirmPage")
@@ -953,8 +993,8 @@ class Ui_Dialog(object):
         self.labelConfirmItemID.setText("")
         self.labelConfirmItemID.setObjectName("labelConfirmItemID")
         self.verticalLayout_6.addWidget(self.labelConfirmItemID)
-        spacerItem4 = QtWidgets.QSpacerItem(20, 40, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
-        self.verticalLayout_6.addItem(spacerItem4)
+        spacerItem5 = QtWidgets.QSpacerItem(20, 40, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
+        self.verticalLayout_6.addItem(spacerItem5)
         self.confirmLabelMessage = QtWidgets.QLabel(self.ConfirmPage)
         self.confirmLabelMessage.setMinimumSize(QtCore.QSize(400, 0))
         font = QtGui.QFont()
@@ -968,8 +1008,8 @@ class Ui_Dialog(object):
         self.confirmLabelMessage.setWordWrap(True)
         self.confirmLabelMessage.setObjectName("confirmLabelMessage")
         self.verticalLayout_6.addWidget(self.confirmLabelMessage)
-        spacerItem5 = QtWidgets.QSpacerItem(20, 40, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
-        self.verticalLayout_6.addItem(spacerItem5)
+        spacerItem6 = QtWidgets.QSpacerItem(20, 40, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
+        self.verticalLayout_6.addItem(spacerItem6)
         self.frame_3 = QtWidgets.QFrame(self.ConfirmPage)
         self.frame_3.setFrameShape(QtWidgets.QFrame.NoFrame)
         self.frame_3.setFrameShadow(QtWidgets.QFrame.Raised)
@@ -1066,8 +1106,8 @@ class Ui_Dialog(object):
         self.lineEditNewRePass.setObjectName("lineEditNewRePass")
         self.formLayout_5.setWidget(2, QtWidgets.QFormLayout.FieldRole, self.lineEditNewRePass)
         self.verticalLayout_8.addWidget(self.frame_4)
-        spacerItem6 = QtWidgets.QSpacerItem(20, 40, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
-        self.verticalLayout_8.addItem(spacerItem6)
+        spacerItem7 = QtWidgets.QSpacerItem(20, 40, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
+        self.verticalLayout_8.addItem(spacerItem7)
         self.stackedWidget.addWidget(self.NewUserPage)
         self.EditUserPage = QtWidgets.QWidget()
         self.EditUserPage.setObjectName("EditUserPage")
@@ -1135,8 +1175,8 @@ class Ui_Dialog(object):
         self.labelEditUserID.setObjectName("labelEditUserID")
         self.formLayout_6.setWidget(6, QtWidgets.QFormLayout.LabelRole, self.labelEditUserID)
         self.verticalLayout_9.addWidget(self.frame_5)
-        spacerItem7 = QtWidgets.QSpacerItem(20, 209, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
-        self.verticalLayout_9.addItem(spacerItem7)
+        spacerItem8 = QtWidgets.QSpacerItem(20, 209, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
+        self.verticalLayout_9.addItem(spacerItem8)
         self.stackedWidget.addWidget(self.EditUserPage)
         self.LoginPage = QtWidgets.QWidget()
         self.LoginPage.setObjectName("LoginPage")
@@ -1179,8 +1219,8 @@ class Ui_Dialog(object):
         self.buttonLogin.setObjectName("buttonLogin")
         self.formLayout_7.setWidget(3, QtWidgets.QFormLayout.FieldRole, self.buttonLogin)
         self.verticalLayout_10.addWidget(self.frame_6)
-        spacerItem8 = QtWidgets.QSpacerItem(20, 271, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
-        self.verticalLayout_10.addItem(spacerItem8)
+        spacerItem9 = QtWidgets.QSpacerItem(20, 271, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
+        self.verticalLayout_10.addItem(spacerItem9)
         self.stackedWidget.addWidget(self.LoginPage)
         self.ChangePasswordPage = QtWidgets.QWidget()
         self.ChangePasswordPage.setObjectName("ChangePasswordPage")
@@ -1228,8 +1268,8 @@ class Ui_Dialog(object):
         self.labelChangePasswordUserID.setObjectName("labelChangePasswordUserID")
         self.formLayout_8.setWidget(2, QtWidgets.QFormLayout.LabelRole, self.labelChangePasswordUserID)
         self.verticalLayout_12.addWidget(self.frame_7)
-        spacerItem9 = QtWidgets.QSpacerItem(20, 40, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
-        self.verticalLayout_12.addItem(spacerItem9)
+        spacerItem10 = QtWidgets.QSpacerItem(20, 40, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
+        self.verticalLayout_12.addItem(spacerItem10)
         self.stackedWidget.addWidget(self.ChangePasswordPage)
         self.NewCommandPage = QtWidgets.QWidget()
         self.NewCommandPage.setObjectName("NewCommandPage")
@@ -1290,14 +1330,14 @@ class Ui_Dialog(object):
         self.dateEditCommandDate.setObjectName("dateEditCommandDate")
         self.gridLayout_2.addWidget(self.dateEditCommandDate, 0, 1, 1, 1)
         self.verticalLayout_11.addWidget(self.frame_8)
-        spacerItem10 = QtWidgets.QSpacerItem(20, 353, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
-        self.verticalLayout_11.addItem(spacerItem10)
+        spacerItem11 = QtWidgets.QSpacerItem(20, 353, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
+        self.verticalLayout_11.addItem(spacerItem11)
         self.stackedWidget.addWidget(self.NewCommandPage)
         self.verticalLayout_13.addWidget(self.stackedWidget)
         self.verticalLayout.addWidget(self.MainWidget)
 
         self.retranslateUi(Dialog)
-        self.stackedWidget.setCurrentIndex(10)
+        self.stackedWidget.setCurrentIndex(1)
         QtCore.QMetaObject.connectSlotsByName(Dialog)
 
     def retranslateUi(self, Dialog):
@@ -1309,6 +1349,9 @@ class Ui_Dialog(object):
         self.lineEditCatName.setPlaceholderText(_translate("Dialog", "Category Name"))
         self.labelCategoryError.setText(_translate("Dialog", "Error Label"))
         self.btnSaveNewCat.setText(_translate("Dialog", "Ajouter"))
+        self.label_31.setText(_translate("Dialog", "Catégory Nom"))
+        self.labelEmptyCodeError.setText(_translate("Dialog", "Error Label"))
+        self.btnSearchEmptyCode.setText(_translate("Dialog", "Recherche"))
         self.label_9.setText(_translate("Dialog", "Category"))
         self.label.setText(_translate("Dialog", "Code"))
         self.lineEditCodeNew.setPlaceholderText(_translate("Dialog", "Code Article"))

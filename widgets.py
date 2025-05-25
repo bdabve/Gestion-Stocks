@@ -4,7 +4,7 @@
 
 from datetime import date
 from decimal import Decimal
-from PyQt5 import QtWidgets, QtCore
+from PyQt5 import QtWidgets, QtCore, QtGui
 import qtawesome as qta
 
 # from uis.h_article import Ui_articleDialog
@@ -152,7 +152,7 @@ def interface_callbacks(root):
             if is_action_with_icon:
                 action_name, callback, action_icon = action
                 menu_label = menu.addAction(action_name)
-                menu_label.setIcon(action_icon)
+                menu_label.setIcon(QtGui.QIcon(action_icon))
             else:
                 action_name, callback = action
                 menu_label = menu.addAction(action_name)
@@ -162,10 +162,31 @@ def interface_callbacks(root):
 
     # -- Menu Product Actions
     product_actions = [
-        ('Quantité Alert', root.stock_alert, qta.icon('ph.alarm-light', color=WHITE_COLOR)),    # Alert Qte
-        ('Price Alert', root.price_alert, qta.icon('ph.alarm-light', color=WHITE_COLOR)),       # Alert Price
-        ('Sans Emplacement', root.article_sans_emp, qta.icon('ph.list-numbers-light', color=WHITE_COLOR)),  # Sans EMP
-        ('Totals', root.total_article, qta.icon('ri.money-dollar-circle-fill', color=WHITE_COLOR)),     # Totals
+        # -- Alert Qte
+        (
+            'Quantité Alert', root.stock_alert,
+            qta.icon('ph.alarm-light', color=WHITE_COLOR).pixmap(QtCore.QSize(25, 25))
+        ),
+        # -- Alert Price
+        (
+            'Price Alert', root.price_alert,
+            qta.icon('ph.alarm-light', color=WHITE_COLOR).pixmap(QtCore.QSize(25, 25))
+        ),
+        # -- Sans Emplacement --
+        (
+            'Sans Emplacement', root.article_sans_emp,
+            qta.icon('ph.list-numbers-light', color=WHITE_COLOR).pixmap(QtCore.QSize(25, 25))
+        ),
+        # -- Totals --
+        (
+            'Totals', root.total_article,
+            qta.icon('ri.money-dollar-circle-fill', color=WHITE_COLOR).pixmap(QtCore.QSize(25, 25))
+        ),
+        # -- Empty Code --
+        (
+            'Code Viérge', root.empty_code,
+            qta.icon('ri.search-line', color=WHITE_COLOR).pixmap(QtCore.QSize(25, 25))
+        ),
     ]
     create_menu(root.ui.btnMenuProductActions, 'ri.arrow-down-s-line', product_actions, is_action_with_icon=True)
 
@@ -180,6 +201,7 @@ def widget_callbacks(root):
         (root.ui.btnSaveNewArticle, qta.icon('mdi.content-save', color=SAVE_COLOR), root.save_new_article),
         (root.ui.btnEditArticle, qta.icon('mdi6.file-edit-outline', color="#F97F51"), root.toggle_edit_mode),
         (root.ui.btnSaveEditArticle, qta.icon('mdi6.content-save', color=SAVE_COLOR), root.update_article),
+        (root.ui.btnSearchEmptyCode, qta.icon('ri.search-line', color=WHITE_COLOR), root.get_empty_code),
 
         # -- Entree Sortie Buttons ---
         (root.ui.btnSaveEntree, qta.icon('mdi6.content-save', color=SAVE_COLOR), root.save_entree),
@@ -221,7 +243,7 @@ class ArticleDialog(QtWidgets.QDialog):
 
         # Hide Errors Label
         error_labels = [
-            self.ui.labelNewError, self.ui.labelCategoryError,
+            self.ui.labelNewError, self.ui.labelCategoryError, self.ui.labelEmptyCodeError,
             self.ui.labelEditError,
             self.ui.labelEntreeError, self.ui.labelSortieError,
             self.ui.labelAddUserErrors, self.ui.labelEditUserErrors, self.ui.labelLoginErrors, self.ui.labelChangePassErrors,
@@ -278,7 +300,6 @@ class ArticleDialog(QtWidgets.QDialog):
         label_error.setText(message)
         label_error.show()
 
-    # ----------------------------------------------------------------------------------
     def resize_dialog(self, current_page):
         """
         Resize the dialog based on the current page.
@@ -295,6 +316,7 @@ class ArticleDialog(QtWidgets.QDialog):
         # self.adjustSize()  # Automatically fit size
         self.resize(200, 100)
 
+    # ----------------------------------------------------------------------------------
     def new_category(self):
         """
         Show the New Category Page
@@ -351,6 +373,27 @@ class ArticleDialog(QtWidgets.QDialog):
         else:
             logger.error(f"{result['message']}")
             self.show_error(self.ui.labelNewError, result['message'])
+
+    def setup_empty_code(self):
+        self.ui.titleLabel.setText("Code Viérge")
+        self.populate_cbbox_category(self.ui.cbBoxCatEmptyCode)
+        self.resize_dialog(current_page=self.ui.EmptyCodePage)
+
+    def get_empty_code(self):
+        """
+        Get all empty codes in the selected category.
+        """
+        cat_name = self.ui.cbBoxCatEmptyCode.currentText()
+        result = self.db_handler.get_all_missing_codes(cat_name)
+        if result['success']:
+            if len(result['missing_codes']) == 0:
+                msg = "Aucun code viérge trouvé pour cette catégorie."
+            else:
+                msg = f"{', '.join(result['missing_codes'])}"
+            self.ui.plainTextEditEmptyCodeResult.setPlainText(msg)
+            self.resize_dialog(self.ui.EmptyCodePage)
+        else:
+            self.ui.labelEmptyCodeError.setText(f"Erreur: {result['message']}")
 
     # ----------------------------------------------------------------------------------
     def set_edit_mode(self, editable: bool):

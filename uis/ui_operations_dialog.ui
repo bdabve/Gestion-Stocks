@@ -48,12 +48,13 @@
 	background-color: rgb(40, 44, 52);
 }
 
+#NewCategoryPage,
+#EmptyCodePage,
 #NewArticlePage, 
 #EditArticlePage,
 #EntreePage,
 #SortiePage,
 #ConfirmPage,
-#NewCategoryPage,
 
 #LoginPage,
 #NewUserPage,
@@ -84,11 +85,12 @@ QLabel {
 	qproperty-alignment: AlignCenter;
 }
 
+#labelCategoryError,
+#labelEmptyCodeError,
 #labelNewError,
 #labelEditError,
 #labelEntreeError,
 #labelSortieError,
-#labelCategoryError,
 
 #labelLoginErrors,
 #labelAddUserErrors,
@@ -280,6 +282,7 @@ QComboBox{
 	border: 2px solid rgb(33, 37, 43);
 	padding: 5px;
 	padding-left: 10px;
+	min-width: 300px;
 }
 QComboBox:hover{
 	border: 2px solid rgb(64, 71, 88);
@@ -560,7 +563,7 @@ QPushButton:!enabled {
          </size>
         </property>
         <property name="currentIndex">
-         <number>10</number>
+         <number>1</number>
         </property>
         <widget class="QWidget" name="NewCategoryPage">
          <layout class="QVBoxLayout" name="verticalLayout_7">
@@ -652,6 +655,102 @@ QPushButton:!enabled {
           </item>
          </layout>
         </widget>
+        <widget class="QWidget" name="EmptyCodePage">
+         <layout class="QVBoxLayout" name="verticalLayout_14">
+          <property name="leftMargin">
+           <number>5</number>
+          </property>
+          <property name="topMargin">
+           <number>15</number>
+          </property>
+          <property name="rightMargin">
+           <number>5</number>
+          </property>
+          <property name="bottomMargin">
+           <number>15</number>
+          </property>
+          <item>
+           <widget class="QWidget" name="widget_2" native="true">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <layout class="QFormLayout" name="formLayout_9">
+             <property name="horizontalSpacing">
+              <number>20</number>
+             </property>
+             <property name="leftMargin">
+              <number>0</number>
+             </property>
+             <property name="topMargin">
+              <number>0</number>
+             </property>
+             <property name="rightMargin">
+              <number>0</number>
+             </property>
+             <property name="bottomMargin">
+              <number>0</number>
+             </property>
+             <item row="0" column="0">
+              <widget class="QLabel" name="label_31">
+               <property name="text">
+                <string>Catégory Nom</string>
+               </property>
+              </widget>
+             </item>
+             <item row="1" column="1">
+              <widget class="QLabel" name="labelEmptyCodeError">
+               <property name="text">
+                <string>Error Label</string>
+               </property>
+              </widget>
+             </item>
+             <item row="0" column="1">
+              <widget class="QComboBox" name="cbBoxCatEmptyCode"/>
+             </item>
+            </layout>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPlainTextEdit" name="plainTextEditEmptyCodeResult">
+            <property name="minimumSize">
+             <size>
+              <width>0</width>
+              <height>200</height>
+             </size>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="btnSearchEmptyCode">
+            <property name="text">
+             <string>Recherche</string>
+            </property>
+            <property name="iconSize">
+             <size>
+              <width>25</width>
+              <height>25</height>
+             </size>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <spacer name="verticalSpacer_10">
+            <property name="orientation">
+             <enum>Qt::Vertical</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>20</width>
+              <height>234</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+         </layout>
+        </widget>
         <widget class="QWidget" name="NewArticlePage">
          <property name="minimumSize">
           <size>
@@ -716,7 +815,7 @@ QPushButton:!enabled {
               <widget class="QComboBox" name="cbBoxCatNew">
                <property name="minimumSize">
                 <size>
-                 <width>0</width>
+                 <width>319</width>
                  <height>31</height>
                 </size>
                </property>

@@ -37,7 +37,7 @@ class GestionStocks(QtWidgets.QMainWindow):
         self.display_date()
         self.goto_page('Magasin')
 
-    # **********************
+    # *********************************************
     #   => GLOBAL FUNCTIONS
     # ************************
     def apply_role_permissions(self):
@@ -239,9 +239,11 @@ class GestionStocks(QtWidgets.QMainWindow):
             )
         elif page == 'Commande':
             tableWidget = self.ui.tableWidgetCommand
+            cmd_id = self.get_item_id(tableWidget)
+            cmd_active = self.db_handler.commande_status(cmd_id)
+            self.ui.activeCommandBtn.setEnabled(cmd_active)
             buttons = (
                 self.ui.editCommandBtn,
-                self.ui.activeCommandBtn,
                 self.ui.delCommandBtn
             )
 
@@ -401,6 +403,14 @@ class GestionStocks(QtWidgets.QMainWindow):
         self.display_records('Movements', rows, self.ui.labelMovementsCount)
         utils.pagebuttons_stats(self)
 
+    def empty_code(self):
+        logger.debug('Search Empty Code')
+        dialog = ArticleDialog(user_id=self.user.id, db_handler=self.db_handler)
+        dialog.setup_empty_code()
+        if dialog.exec_() == QtWidgets.QDialog.Accepted:
+            # self.show_error_message('Catégorie ajoutée avec succès', success=True)
+            self.goto_page('Magasin')
+
     # *************************************************************************
     #   => Article Operation(New, details, edit, entree, sortie) Page
     # *****************************************************************
@@ -494,7 +504,7 @@ class GestionStocks(QtWidgets.QMainWindow):
 
     # *************************************************************************
     # --- USERS PAGE ---
-    # *****************************************************************
+    # ********************
     def display_all_users(self):
         """
         Display all users from the database
@@ -502,7 +512,7 @@ class GestionStocks(QtWidgets.QMainWindow):
         logger.info('Display all Users from database.')
         query = f"""
         SELECT {', '.join(widgets.user_fields)} FROM auth_user
-        INNER JOIN accounts_profile AS p ON auth_user.id = p.user_id ORDER BY date_joined DESC
+        LEFT JOIN accounts_profile AS p ON auth_user.id = p.user_id ORDER BY date_joined DESC
         """
         rows = self.db_handler.fetch_all(query)
         self.display_records('Users', rows, self.ui.labelUsersCount)
@@ -584,7 +594,7 @@ class GestionStocks(QtWidgets.QMainWindow):
 
     # *************************************************************************
     # --- MOVEMENT PAGE ---
-    # *****************************************************************
+    # **********************
     def display_all_movements(self):
         """
         Dump all records from magasin_movement SQL Table
@@ -646,7 +656,7 @@ class GestionStocks(QtWidgets.QMainWindow):
 
     # *************************************************************************
     # --- COMMANDE PAGE ---
-    # *****************************************************************
+    # **********************
     def display_all_commande(self):
         """
         Dump all records from magasin_command SQL Table
