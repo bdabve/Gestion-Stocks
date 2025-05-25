@@ -45,6 +45,7 @@ QDialog,
 #LoginPage,
 #NewUserPage,
 #EditUserPage,
+#ChangePasswordPage,
 
 #NewCommandPage
 {
@@ -72,6 +73,7 @@ QLabel {
 #labelLoginErrors,
 #labelAddUserErrors,
 #labelEditUserErrors,
+#labelChangePassErrors,
 
 #labelCommandError {	
 	color: #e55039;
@@ -423,7 +425,7 @@ color: rgb(255, 255, 255);</string>
       </size>
      </property>
      <property name="currentIndex">
-      <number>6</number>
+      <number>9</number>
      </property>
      <widget class="QWidget" name="NewCategoryPage">
       <layout class="QVBoxLayout" name="verticalLayout_7">
@@ -902,16 +904,6 @@ color: rgb(255, 255, 255);</string>
               <width>25</width>
               <height>25</height>
              </size>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QLabel" name="labelArticleId">
-            <property name="enabled">
-             <bool>true</bool>
-            </property>
-            <property name="text">
-             <string/>
             </property>
            </widget>
           </item>
@@ -1451,6 +1443,16 @@ color: rgb(255, 255, 255);</string>
             </property>
             <property name="text">
              <string>Label Edit Article Errors</string>
+            </property>
+           </widget>
+          </item>
+          <item row="10" column="0">
+           <widget class="QLabel" name="labelArticleId">
+            <property name="enabled">
+             <bool>true</bool>
+            </property>
+            <property name="text">
+             <string/>
             </property>
            </widget>
           </item>
@@ -2481,6 +2483,123 @@ color: rgb(255, 255, 255);</string>
           <size>
            <width>20</width>
            <height>271</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="ChangePasswordPage">
+      <layout class="QVBoxLayout" name="verticalLayout_12">
+       <item>
+        <widget class="QFrame" name="frame_7">
+         <property name="frameShape">
+          <enum>QFrame::NoFrame</enum>
+         </property>
+         <property name="frameShadow">
+          <enum>QFrame::Raised</enum>
+         </property>
+         <layout class="QFormLayout" name="formLayout_8">
+          <property name="horizontalSpacing">
+           <number>15</number>
+          </property>
+          <property name="verticalSpacing">
+           <number>6</number>
+          </property>
+          <property name="leftMargin">
+           <number>0</number>
+          </property>
+          <property name="topMargin">
+           <number>0</number>
+          </property>
+          <property name="rightMargin">
+           <number>0</number>
+          </property>
+          <property name="bottomMargin">
+           <number>0</number>
+          </property>
+          <item row="0" column="0">
+           <widget class="QLabel" name="usernameLoginLabel_2">
+            <property name="text">
+             <string>New Password</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="1">
+           <widget class="QLineEdit" name="lineEditChangePass">
+            <property name="echoMode">
+             <enum>QLineEdit::Password</enum>
+            </property>
+            <property name="placeholderText">
+             <string>New Password</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="0">
+           <widget class="QLabel" name="passwordLabel_2">
+            <property name="text">
+             <string>Re-Password</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="1">
+           <widget class="QLineEdit" name="lineEditReChangePass">
+            <property name="echoMode">
+             <enum>QLineEdit::Password</enum>
+            </property>
+            <property name="placeholderText">
+             <string>Retype Password</string>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="1">
+           <widget class="QLabel" name="labelChangePassErrors">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="text">
+             <string>Label Error</string>
+            </property>
+            <property name="wordWrap">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="1">
+           <widget class="QPushButton" name="buttonChangePassword">
+            <property name="text">
+             <string>Change Password</string>
+            </property>
+            <property name="iconSize">
+             <size>
+              <width>25</width>
+              <height>25</height>
+             </size>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="0">
+           <widget class="QLabel" name="labelChangePasswordUserID">
+            <property name="text">
+             <string/>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <spacer name="verticalSpacer_11">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>20</width>
+           <height>40</height>
           </size>
          </property>
         </spacer>

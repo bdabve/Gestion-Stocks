@@ -63,12 +63,16 @@ class Database:
         result = self.fetch_namedtuple(query, [cat_id])
         return result[0].name
 
-    def insert_new_article(self, article_data, mov_date, qte, prix):
-        user_id = 1  # Placeholder for user ID, replace with actual user ID logic
+    def insert_new_article(self, article_data, code, mov_date, qte, prix, user_id):
         try:
             with self.connect() as conn:
                 cursor = conn.cursor()
                 conn.execute("BEGIN")  # Start transaction
+
+                # Check if username already exists
+                cursor.execute("SELECT art_id FROM magasin_article WHERE code = ?", (code,))
+                if cursor.fetchone():
+                    return {'success': False, 'message': f"❌ Article avec ce code {code} existe déjà."}
 
                 # Step 2: Insert into magasin_article
                 fields = [
@@ -118,8 +122,7 @@ class Database:
         result = self.fetch_all(query, [art_id])
         return result
 
-    def process_stock_entry(self, article, ent_qte, ent_prix, ent_date):
-        user_id = 1  # Placeholder for user ID, replace with actual user ID logic
+    def process_stock_entry(self, article, ent_qte, ent_prix, ent_date, user_id):
         try:
             with self.connect() as conn:
                 cursor = conn.cursor()
@@ -147,11 +150,10 @@ class Database:
         except sqlite3.Error as e:
             return {'success': False, 'message': str(e)}
 
-    def process_stock_sortie(self, art_id, sortie_qte, sortie_date):
+    def process_stock_sortie(self, art_id, sortie_qte, sortie_date, user_id):
         """
         Process stock sortie in SQLite: update article quantity and log the movement.
         """
-        user_id = 1  # Placeholder for user ID, replace with actual user ID logic
         try:
             with self.connect() as conn:
                 cursor = conn.cursor()
@@ -256,6 +258,42 @@ class Database:
                 return {'success': True, 'message': '✅ Utilisateur modifié avec succès'}
         except sqlite3.Error as e:
             return {'success': False, 'message': str(e)}
+
+    def change_user_password(self, user_id, new_password, retype_password):
+        """
+        Change a user's password after verifying and matching the new password confirmation.
+
+        Parameters:
+            user_id (str): id of the user.
+            new_password (str): New password.
+            retype_password (str): New password confirmation.
+
+        Returns:
+            dict: { 'success': True/False, 'message': str }
+        """
+        if new_password != retype_password:
+            return {'success': False, 'message': "❌ Les mots de passe ne correspondent pas."}
+
+        try:
+            with self.connect() as conn:
+                cursor = conn.cursor()
+
+                cursor.execute("SELECT password FROM auth_user WHERE id = ?", (user_id,))
+                row = cursor.fetchone()
+
+                if not row:
+                    return {'success': False, 'message': "❌ Utilisateur introuvable."}
+
+                hashed_new_password = django_pbkdf2_sha256.hash(new_password)
+                cursor.execute(
+                    "UPDATE auth_user SET password = ? WHERE id = ?",
+                    (hashed_new_password, user_id)
+                )
+
+                return {'success': True, 'message': "✅ Mot de passe mis à jour avec succès."}
+
+        except Exception as e:
+            return {'success': False, 'message': f"❌ Erreur: {str(e)}"}
 
 
 if __name__ == '__main__':

@@ -4,10 +4,11 @@
 
 from datetime import date
 from decimal import Decimal
-from PyQt5 import QtWidgets     # , QtCore
+from PyQt5 import QtWidgets, QtCore
 import qtawesome as qta
 
-from uis.h_article import Ui_articleDialog
+# from uis.h_article import Ui_articleDialog
+from uis.h_operations_dialog import Ui_Dialog
 import utils
 from logger import logger
 
@@ -61,6 +62,7 @@ def interface_callbacks(root):
         ),
         (root.ui.newUserBtn, qta.icon('ri.user-add-line', color=NEW_COLOR), root.new_user),            # -- New User --
         (root.ui.editUserBtn, qta.icon('ri.user-settings-line', color='#0097e6'), root.edit_user),      # -- Edit User --
+        (root.ui.changePasswordBtn, qta.icon('ri.lock-password-line', color=NEW_COLOR), root.change_password),  # Change Passwd
         (root.ui.delUserBtn, qta.icon('ri.user-unfollow-line', color=TRASH_COLOR), root.delete_user),     # -- Delete User --
 
         # --- MOVEMENT PAGE ---
@@ -76,11 +78,13 @@ def interface_callbacks(root):
         # -- COMMANDE PAGE
         (
             root.ui.buttonCommandePage,
-            False,
-            # qta.icon('ri.arrow-left-right-line', color='#ffffff'),
+            # False,
+            qta.icon('mdi6.truck-flatbed', color='#ffffff'),
             lambda: root.goto_page('Commande')
         ),
-        (root.ui.newCommandBtn, qta.icon('fa5s.truck-loading', color="#EE5A24"), root.new_commande),   # New Commande
+        (root.ui.newCommandBtn, qta.icon('mdi6.truck-plus', color="#EE5A24"), root.new_commande),   # New Commande
+        # Active Commande
+        (root.ui.activeCommandBtn, qta.icon('mdi.truck-check', color=NEW_COLOR), root.activate_command),
         (root.ui.delCommandBtn, qta.icon('msc.trashcan', color=TRASH_COLOR), root.delete_commande),    # Delete Commande
 
         # -- HISTORY PAGE
@@ -183,12 +187,12 @@ def widget_callbacks(root):
         # --- Delete ---
         (root.ui.buttonConfirm, False, root.accept),        # close with True accept
         (root.ui.buttonCancel, False, root.close),          # close with False
-        (root.ui.pushButtonClose, False, root.close),       # close with False
 
         # -- Users --
         (root.ui.buttonLogin, qta.icon('ri.login-box-line', color="#ffffff"), root.handle_login),
         (root.ui.buttonSaveNewUser, qta.icon('mdi.content-save-outline', color=SAVE_COLOR), root.save_new_user),
         (root.ui.buttonSaveEditUser, qta.icon('mdi.content-save-outline', color=SAVE_COLOR), root.save_profile),
+        (root.ui.buttonChangePassword, qta.icon('mdi.content-save-outline', color=SAVE_COLOR), root.save_new_password),
 
         # -- Commande
         (root.ui.btnSaveCommand, qta.icon('mdi.content-save-outline', color=SAVE_COLOR), root.save_command),
@@ -199,9 +203,10 @@ def widget_callbacks(root):
 
 
 class ArticleDialog(QtWidgets.QDialog):
-    def __init__(self, db_handler):
+    def __init__(self, user_id, db_handler):
         super().__init__()
-        self.ui = Ui_articleDialog()
+        self.ui = Ui_Dialog()
+        self.user_id = user_id
         self.db_handler = db_handler
         self.ui.setupUi(self)
 
@@ -209,15 +214,16 @@ class ArticleDialog(QtWidgets.QDialog):
         self.edit_mode = False
 
         # Remove title bar
-        # self.setWindowFlags(QtCore.Qt.FramelessWindowHint)
-        # self.setAttribute(QtCore.Qt.WidgetAttribute.WA_TranslucentBackground)
+        self.setWindowFlags(QtCore.Qt.FramelessWindowHint)
+        self.setAttribute(QtCore.Qt.WidgetAttribute.WA_TranslucentBackground)
+        self.ui.contentTopBg.mouseMoveEvent = self.move_window  # to move window from the upBar
 
         # Hide Errors Label
         error_labels = [
             self.ui.labelNewError, self.ui.labelCategoryError,
             self.ui.labelEditError,
             self.ui.labelEntreeError, self.ui.labelSortieError,
-            self.ui.labelAddUserErrors, self.ui.labelEditUserErrors, self.ui.labelLoginErrors,
+            self.ui.labelAddUserErrors, self.ui.labelEditUserErrors, self.ui.labelLoginErrors, self.ui.labelChangePassErrors,
             self.ui.labelCommandError
         ]
         for label in error_labels:
@@ -227,6 +233,18 @@ class ArticleDialog(QtWidgets.QDialog):
         # --- Setup Buttons ---
         widget_callbacks(self)
         self.setModal(True)     # Set Focus
+        self.ui.closeAppBtn.clicked.connect(self.close)
+
+    def mousePressEvent(self, event):
+        self.clickPosition = event.globalPos()
+
+    def move_window(self, e):
+        """Move the window from upBar"""
+        if not self.isMaximized():
+            if e.buttons() == QtCore.Qt.LeftButton:
+                self.move(self.pos() + e.globalPos() - self.clickPosition)
+                self.clickPosition = e.globalPos()
+                e.accept()
 
     def toggle_edit_mode(self):
         """
@@ -245,12 +263,12 @@ class ArticleDialog(QtWidgets.QDialog):
         # items.insert(0, 'Tous')
         utils.populate_comboBox(comboBoxName, items)
 
-    def label_article_id(self, art_id):
+    def setup_label_id(self, label_id, item_id):
         """
         Set the label for the article ID.
         """
-        self.ui.labelArticleId.setText(str(art_id))
-        self.ui.labelArticleId.hide()
+        label_id.setText(str(item_id))
+        label_id.hide()
 
     def show_error(self, label_error, message='Une erreur est survenue'):
         """
@@ -280,6 +298,7 @@ class ArticleDialog(QtWidgets.QDialog):
         """
         Show the New Category Page
         """
+        self.ui.titleLabel.setText("Nouvelle Catégorie")
         self.resize_dialog(current_page=self.ui.NewCategoryPage)
 
     def save_new_category(self):
@@ -300,6 +319,7 @@ class ArticleDialog(QtWidgets.QDialog):
             self.show_error(self.ui.labelCategoryError, "Erreur lors de l'ajout de la catégorie")
 
     def new_article(self):
+        self.ui.titleLabel.setText("Nouvel Article")
         self.populate_cbbox_category(self.ui.cbBoxCatNew)
         self.resize_dialog(current_page=self.ui.NewArticlePage)
 
@@ -322,14 +342,14 @@ class ArticleDialog(QtWidgets.QDialog):
         prix = self.ui.dSBoxPrixNew.value()
         valeur = qte * prix
 
-        params = [today, cat_id, code, slug, desig, ref, um, emp, qte, prix, valeur, obs]
-        result = self.db_handler.insert_new_article(params, today, qte, prix)
+        article_data = [today, cat_id, code, slug, desig, ref, um, emp, qte, prix, valeur, obs]
+        result = self.db_handler.insert_new_article(article_data, code, today, qte, prix, self.user_id)
         if result['success']:
             logger.info(f"{result['message']} - Article ID: {result['lastrowid']}")
             self.accept()   # close the dialog
         else:
             logger.error(f"{result['message']}")
-            self.show_error(self.ui.labelNewError, "Erreur lors de l'ajout de l'article")
+            self.show_error(self.ui.labelNewError, result['message'])
 
     # ----------------------------------------------------------------------------------
     def set_edit_mode(self, editable: bool):
@@ -365,7 +385,8 @@ class ArticleDialog(QtWidgets.QDialog):
         if rows:
             article = rows[0]
             self.ui.titleLabel.setText('Fiche de Stock N° ' + str(art_id))
-            self.label_article_id(art_id)
+            self.setup_label_id(self.ui.labelArticleId, art_id)
+
             self.ui.lineEditCodeEdit.setText(f"{article.code}")
             self.ui.lineEditDesigEdit.setText(f"{article.designation}")
             self.ui.lineEditRefEdit.setText(f"{article.ref}")
@@ -427,6 +448,7 @@ class ArticleDialog(QtWidgets.QDialog):
             self.show_error(self.ui.labelEditError, "Erreur lors de la mise à jour de l'article")
 
     def confirm_dialog(self, msg):
+        self.ui.titleLabel.setText("Confirmation")
         self.ui.confirmLabelMessage.setText(msg)
         self.resize_dialog(current_page=self.ui.ConfirmPage)
 
@@ -437,17 +459,15 @@ class ArticleDialog(QtWidgets.QDialog):
         if rows:
             article = rows[0]
             if page == 'Sortie':
-                self.ui.sortieArticleID.setText(str(art_id))
-                self.ui.sortieArticleID.hide()
-                self.ui.titleLabel.setText("Nouvel Sortie")
+                self.setup_label_id(self.ui.sortieArticleID, art_id)
+                self.ui.titleLabel.setText("Nouvelle Sortie")
                 self.ui.dateEditSortieDate.setDate(today)
                 self.ui.lineEditSortieCode.setText(article.code)
                 self.ui.spBoxSortiePrix.setValue(Decimal(article.prix))
                 st_page = self.ui.SortiePage
             elif page == 'Entree':
                 # Entree
-                self.ui.entreeArticleID.setText(str(art_id))
-                self.ui.entreeArticleID.hide()
+                self.setup_label_id(self.ui.entreeArticleID, art_id)
                 self.ui.titleLabel.setText("Nouvelle Entrée")
                 self.ui.dateEditEntreeDate.setDate(today)
                 self.ui.lineEditEntreeCode.setText(article.code)
@@ -474,7 +494,7 @@ class ArticleDialog(QtWidgets.QDialog):
         logger.debug(f'Entree: ({art_id})-({art_code})-({ent_movdate})-({ent_qte})-({ent_prix})')
 
         # --- Save the Form --- #
-        result = self.db_handler.process_stock_entry(article, ent_qte, ent_prix, ent_movdate)
+        result = self.db_handler.process_stock_entry(article, ent_qte, ent_prix, ent_movdate, self.user_id)
         # Check Qte and Prix for calculation
         if result['success']:
             logger.info("✅ Entrée ajoutée avec succès")
@@ -500,7 +520,7 @@ class ArticleDialog(QtWidgets.QDialog):
         logger.debug(f'Sortie: ({art_id})-({art_code})-({sortie_movdate})-({sortie_qte})-({sortie_prix})')
 
         # --- Save the Form --- #
-        result = self.db_handler.process_stock_sortie(art_id, sortie_qte, sortie_movdate)
+        result = self.db_handler.process_stock_sortie(art_id, sortie_qte, sortie_movdate, self.user_id)
         # Check Qte and Prix for calculation
         if result['success']:
             logger.info("✅ Entrée ajoutée avec succès")
@@ -534,6 +554,7 @@ class ArticleDialog(QtWidgets.QDialog):
             self.show_error(self.ui.labelLoginErrors, "Nom d'utilisateur ou mot de passe incorrect.")
 
     def setup_new_user(self):
+        self.ui.titleLabel.setText("Nouvel Utilisateur")
         self.resize_dialog(current_page=self.ui.NewUserPage)
 
     def save_new_user(self):
@@ -563,8 +584,7 @@ class ArticleDialog(QtWidgets.QDialog):
         if rows:
             user = rows[0]
             self.ui.titleLabel.setText(f"Fiche d'Utilisateur N°: {user_id}")
-            self.ui.labelEditUserID.setText(str(user_id))
-            self.ui.labelEditUserID.hide()
+            self.setup_label_id(self.ui.labelEditUserID, user_id)
 
             self.ui.lineEditEditUsername.setText(user.username)
             self.ui.lineEditEditFName.setText(user.first_name)
@@ -596,14 +616,32 @@ class ArticleDialog(QtWidgets.QDialog):
             logger.error(f"❌ Échec de la mise à jour de l'utilisateur {result['message']}")
             self.show_error(self.ui.labelEditUserErrors, "Erreur lors de la mise à jour de l'utilisateur")
 
+    def setup_change_password(self, user_id):
+        self.ui.titleLabel.setText("Changer Mot de Passe")
+        self.setup_label_id(self.ui.labelChangePasswordUserID, user_id)
+        self.resize_dialog(current_page=self.ui.ChangePasswordPage)
+
+    def save_new_password(self):
+        user_id = self.ui.labelChangePasswordUserID.text()
+        new_password = self.ui.lineEditChangePass.text()
+        re_password = self.ui.lineEditReChangePass.text()
+        logger.debug('-' * 30)
+        logger.debug(f'save new password for user with id: {user_id}')
+        logger.debug(f"Values: ({new_password})")
+        result = self.db_handler.change_user_password(user_id, new_password, re_password)
+        if result['success']:
+            logger.info("✅ Mot de passe mise à jour avec succès")
+            self.accept()  # close dialog if it's a QDialog
+        else:
+            logger.error(f"❌ Échec de la mise à jour de mot de passe {result['message']}")
+            self.show_error(self.ui.labelChangePassErrors, f"{result['message']}")
+
     # ------------------------------------------------------------------------------------
     # -- COMMANDE PAGE
     # ----------------
     def setup_commande_page(self, art_id, art_code, user_id):
-        self.ui.commandArticleID.setText(f"{art_id}")
-        self.ui.commandArticleID.hide()
-        self.ui.commandUserID.setText(f"{user_id}")
-        self.ui.commandUserID.hide()
+        self.ui.titleLabel.setText("Nouvelle Commande")
+        self.setup_label_id(self.ui.commandArticleID, art_id)
 
         self.ui.dateEditCommandDate.setDate(today)
         self.ui.lineEditCommandCode.setText(art_code)
@@ -613,14 +651,13 @@ class ArticleDialog(QtWidgets.QDialog):
     def save_command(self):
         logger.debug('Saving new commande')
         art_id = self.ui.commandArticleID.text()
-        user_id = self.ui.commandUserID.text()
         command_date = self.ui.dateEditCommandDate.date().toPyDate()
         qte = self.ui.spBoxCommandQte.value()
         status = 0
         query = "INSERT INTO magasin_command(command_date, qte, art_id_id, user_id_id, status) VALUES(?, ?, ?, ?, ?)"
-        params = [command_date, qte, art_id, user_id, 0]
+        params = [command_date, qte, art_id, self.user_id, 0]
         logger.debug('\nNouvel Commande')
-        logger.debug(f'Commande: ({art_id})-({user_id})-({command_date})-({qte})-({status})')
+        logger.debug(f'Commande: ({art_id})-({self.user_id})-({command_date})-({qte})-({status})')
 
         # --- Save the Form --- #
         result = self.db_handler.execute_query(query, params)

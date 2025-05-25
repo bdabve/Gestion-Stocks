@@ -1863,7 +1863,7 @@ p, li { white-space: pre-wrap; }
              <string notr="true"/>
             </property>
             <property name="currentIndex">
-             <number>2</number>
+             <number>0</number>
             </property>
             <widget class="QWidget" name="MagasinPage">
              <layout class="QVBoxLayout" name="verticalLayout_4">
@@ -3077,7 +3077,7 @@ min-width: 90px;</string>
                     <item>
                      <widget class="QPushButton" name="newUserBtn">
                       <property name="toolTip">
-                       <string>Nouvel Article</string>
+                       <string>Nouvel Utilisateur</string>
                       </property>
                       <property name="styleSheet">
                        <string notr="true">padding: 0px 7px;
@@ -3104,7 +3104,7 @@ min-width: 90px;</string>
                        <bool>false</bool>
                       </property>
                       <property name="toolTip">
-                       <string>Modifier l'Article</string>
+                       <string>Modifier l'utilisateur</string>
                       </property>
                       <property name="text">
                        <string/>
@@ -3127,7 +3127,7 @@ min-width: 90px;</string>
                        <bool>false</bool>
                       </property>
                       <property name="toolTip">
-                       <string>Suprimer l'Article</string>
+                       <string>Suprimer l'utilisateur</string>
                       </property>
                       <property name="text">
                        <string/>
@@ -3135,6 +3135,25 @@ min-width: 90px;</string>
                       <property name="icon">
                        <iconset resource="../resource.qrc">
                         <normaloff>:/icons/icons/scissors--minus.png</normaloff>:/icons/icons/scissors--minus.png</iconset>
+                      </property>
+                      <property name="iconSize">
+                       <size>
+                        <width>25</width>
+                        <height>25</height>
+                       </size>
+                      </property>
+                     </widget>
+                    </item>
+                    <item>
+                     <widget class="QPushButton" name="changePasswordBtn">
+                      <property name="enabled">
+                       <bool>false</bool>
+                      </property>
+                      <property name="toolTip">
+                       <string>Change le Mot de Pass</string>
+                      </property>
+                      <property name="text">
+                       <string/>
                       </property>
                       <property name="iconSize">
                        <size>
@@ -3655,6 +3674,25 @@ min-width: 90px;</string>
                       <property name="icon">
                        <iconset resource="../resource.qrc">
                         <normaloff>:/icons/icons/scissors--minus.png</normaloff>:/icons/icons/scissors--minus.png</iconset>
+                      </property>
+                      <property name="iconSize">
+                       <size>
+                        <width>25</width>
+                        <height>25</height>
+                       </size>
+                      </property>
+                     </widget>
+                    </item>
+                    <item>
+                     <widget class="QPushButton" name="activeCommandBtn">
+                      <property name="enabled">
+                       <bool>false</bool>
+                      </property>
+                      <property name="toolTip">
+                       <string>Activé la Commande</string>
+                      </property>
+                      <property name="text">
+                       <string/>
                       </property>
                       <property name="iconSize">
                        <size>

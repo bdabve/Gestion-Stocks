@@ -50,14 +50,15 @@ class GestionStocks(QtWidgets.QMainWindow):
             self.ui.newCommandBtn,
             self.ui.editUserBtn, self.ui.delUserBtn
         ]
-        if self.user.role != 'admin':
+        if self.user.groupe != 'admin':
             logger.info('User is not admin, disabling buttons.')
             for btn in buttons:
                 btn.hide()
 
     def get_item_id(self, tableWidget):
         """
-        This return the current selected article ID
+        This return the current selected row and column 0, item ID from tableWidget
+        :tableWidget: the table widget to get item
         """
         if utils.table_has_selection(tableWidget):
             row = tableWidget.currentRow()
@@ -233,12 +234,14 @@ class GestionStocks(QtWidgets.QMainWindow):
             tableWidget = self.ui.tableWidgetUsers
             buttons = (
                 self.ui.editUserBtn,
+                self.ui.changePasswordBtn,
                 self.ui.delUserBtn
             )
         elif page == 'Commande':
             tableWidget = self.ui.tableWidgetCommand
             buttons = (
                 self.ui.editCommandBtn,
+                self.ui.activeCommandBtn,
                 self.ui.delCommandBtn
             )
 
@@ -406,7 +409,7 @@ class GestionStocks(QtWidgets.QMainWindow):
         Open the dialog for new category
         """
         logger.debug('Adding new catégory.')
-        dialog = ArticleDialog(db_handler=self.db_handler)
+        dialog = ArticleDialog(user_id=self.user.id, db_handler=self.db_handler)
         dialog.new_category()
         if dialog.exec_() == QtWidgets.QDialog.Accepted:
             self.show_error_message('Catégorie ajoutée avec succès', success=True)
@@ -416,7 +419,7 @@ class GestionStocks(QtWidgets.QMainWindow):
         """
         Open the dialog for new article
         """
-        dialog = ArticleDialog(db_handler=self.db_handler)
+        dialog = ArticleDialog(user_id=self.user.id, db_handler=self.db_handler)
         dialog.new_article()
         if dialog.exec_() == QtWidgets.QDialog.Accepted:
             self.show_error_message('Article ajouté avec succès', success=True)
@@ -427,7 +430,7 @@ class GestionStocks(QtWidgets.QMainWindow):
         Open the dialog for article details and update
         """
         art_id = self.get_item_id(self.ui.tableWidgetProduct)
-        dialog = ArticleDialog(db_handler=self.db_handler)
+        dialog = ArticleDialog(user_id=self.user.id, db_handler=self.db_handler)
         dialog.article_details(art_id)
         if dialog.exec_() == QtWidgets.QDialog.Accepted:
             self.show_error_message('Article modifié avec succès', success=True)
@@ -438,7 +441,7 @@ class GestionStocks(QtWidgets.QMainWindow):
         This will open the article detail with edit mode enabled
         """
         art_id = self.get_item_id(self.ui.tableWidgetProduct)
-        dialog = ArticleDialog(db_handler=self.db_handler)
+        dialog = ArticleDialog(user_id=self.user.id, db_handler=self.db_handler)
         dialog.article_details(art_id, edit_mode=True)
         if dialog.exec_() == QtWidgets.QDialog.Accepted:
             self.show_error_message('Article modifié avec succès', success=True)
@@ -449,7 +452,7 @@ class GestionStocks(QtWidgets.QMainWindow):
         Open the dialog for new article entry
         """
         art_id = self.get_item_id(self.ui.tableWidgetProduct)
-        dialog = ArticleDialog(db_handler=self.db_handler)
+        dialog = ArticleDialog(user_id=self.user.id, db_handler=self.db_handler)
         dialog.setup_entree_sortie(art_id, 'Entree')
         if dialog.exec_() == QtWidgets.QDialog.Accepted:
             self.show_error_message('Entrée Ajouté avec succés', success=True)
@@ -460,7 +463,7 @@ class GestionStocks(QtWidgets.QMainWindow):
         Open the dialog for new article entry
         """
         art_id = self.get_item_id(self.ui.tableWidgetProduct)
-        dialog = ArticleDialog(db_handler=self.db_handler)
+        dialog = ArticleDialog(user_id=self.user.id, db_handler=self.db_handler)
         dialog.setup_entree_sortie(art_id, 'Sortie')
         if dialog.exec_() == QtWidgets.QDialog.Accepted:
             self.show_error_message('Sortie Ajouté avec succés', success=True)
@@ -473,7 +476,7 @@ class GestionStocks(QtWidgets.QMainWindow):
         art_id = self.get_item_id(self.ui.tableWidgetProduct)
         logger.debug(f'Confirm delete article ID: {art_id}')
 
-        dialog = ArticleDialog(db_handler=self.db_handler)
+        dialog = ArticleDialog(user_id=self.user.id, db_handler=self.db_handler)
         msg = f"Voulez-vous vraiment supprimer l'article avec ID: {art_id} ?\n Cette action ne peut pas être annulée."
         dialog.confirm_dialog(msg)
         if dialog.exec_() == QtWidgets.QDialog.Accepted:
@@ -526,7 +529,7 @@ class GestionStocks(QtWidgets.QMainWindow):
         Open the dialog for new user
         """
         logger.debug('Adding new User.')
-        dialog = ArticleDialog(db_handler=self.db_handler)
+        dialog = ArticleDialog(user_id=self.user.id, db_handler=self.db_handler)
         dialog.setup_new_user()
         if dialog.exec_() == QtWidgets.QDialog.Accepted:
             # self.show_error_message('Utilisateur ajouté avec succès', success=True)
@@ -538,10 +541,22 @@ class GestionStocks(QtWidgets.QMainWindow):
         """
         user_id = self.get_item_id(self.ui.tableWidgetUsers)
         logger.debug(f"Edit User ID: {user_id}")
-        dialog = ArticleDialog(db_handler=self.db_handler)
+        dialog = ArticleDialog(user_id=self.user.id, db_handler=self.db_handler)
         dialog.setup_edit_user(user_id)
         if dialog.exec_() == QtWidgets.QDialog.Accepted:
             self.show_error_message('Utilisateur modifié avec succès', success=True)
+            self.goto_page('Users')
+
+    def change_password(self):
+        """
+        Open the dialog for change password
+        """
+        user_id = self.get_item_id(self.ui.tableWidgetUsers)
+        logger.debug(f"Change Password for User ID: {user_id}")
+        dialog = ArticleDialog(user_id=self.user.id, db_handler=self.db_handler)
+        dialog.setup_change_password(user_id)
+        if dialog.exec_() == QtWidgets.QDialog.Accepted:
+            self.show_error_message('Mot de passe mis à jour avec succés.', success=True)
             self.goto_page('Users')
 
     def delete_user(self):
@@ -551,7 +566,7 @@ class GestionStocks(QtWidgets.QMainWindow):
         user_id = self.get_item_id(self.ui.tableWidgetUsers)
         logger.debug(f"Confirm Delete User ID: {user_id}")
 
-        dialog = ArticleDialog(db_handler=self.db_handler)
+        dialog = ArticleDialog(user_id=self.user.id, db_handler=self.db_handler)
         msg = f"Voulez-vous vraiment supprimer l'utilisateur avec ID: {user_id} ?\n Cette action ne peut pas être annulée."
         dialog.confirm_dialog(msg)
         if dialog.exec_() == QtWidgets.QDialog.Accepted:
@@ -640,8 +655,8 @@ class GestionStocks(QtWidgets.QMainWindow):
         query = """SELECT cmd.command_id, DATE(cmd.command_date) AS cmd_date, user.username,
                     art.code, art.designation, cmd.qte, cmd.status
                     FROM magasin_command AS cmd
-                    INNER JOIN magasin_article AS art ON cmd.art_id_id = art.art_id
-                    INNER JOIN auth_user AS user ON user.id = cmd.user_id_id
+                    LEFT JOIN magasin_article AS art ON cmd.art_id_id = art.art_id
+                    LEFT JOIN auth_user AS user ON user.id = cmd.user_id_id
                     ORDER BY cmd.command_date DESC"""
         rows = self.db_handler.fetch_all(query)
         self.display_records('Commande', rows, self.ui.labelCommandCount)
@@ -673,7 +688,7 @@ class GestionStocks(QtWidgets.QMainWindow):
         """
         art_id = self.get_item_id(self.ui.tableWidgetProduct)
         art_code = utils.get_column_value(self.ui.tableWidgetProduct, self.ui.tableWidgetProduct.currentRow(), 1)
-        dialog = ArticleDialog(db_handler=self.db_handler)
+        dialog = ArticleDialog(user_id=self.user.id, db_handler=self.db_handler)
         dialog.setup_commande_page(art_id, art_code, self.user.id)
         if dialog.exec_() == QtWidgets.QDialog.Accepted:
             logger.debug('Adding new commande.')
@@ -687,7 +702,7 @@ class GestionStocks(QtWidgets.QMainWindow):
         cmd_id = self.get_item_id(self.ui.tableWidgetCommand)
         logger.debug(f'Confirm delete Commande ID: {cmd_id}')
 
-        dialog = ArticleDialog(db_handler=self.db_handler)
+        dialog = ArticleDialog(user_id=self.user.id, db_handler=self.db_handler)
         msg = f"Voulez-vous vraiment supprimer la commande avec ID: {cmd_id} ?\n Cette action ne peut pas être annulée."
         dialog.confirm_dialog(msg)
         if dialog.exec_() == QtWidgets.QDialog.Accepted:
@@ -703,6 +718,22 @@ class GestionStocks(QtWidgets.QMainWindow):
         else:
             logger.debug('Cancel Deleting')
 
+    def activate_command(self):
+        """
+        Activate Commande
+        set the status to 1 (active) in the database
+        """
+        cmd_id = self.get_item_id(self.ui.tableWidgetCommand)
+        query = "UPDATE magasin_command SET status = 1 WHERE command_id = ?"
+        result = self.db_handler.execute_query(query, [cmd_id])
+        if result['success']:
+            logger.info(f'Command with ID: {cmd_id} activated successfully.')
+            self.show_error_message('Commande activée avec succès', success=True)
+            self.goto_page('Commande')
+        else:
+            self.show_error_message("Erreur lors de l'activation de la Commande", success=False)
+            logger.debug(f"Error activating Commande {result['message']}")
+
 
 if __name__ == '__main__':
     app = QtWidgets.QApplication(sys.argv)
@@ -716,8 +747,8 @@ if __name__ == '__main__':
         # sys.exit(app.exec_())
     from dekhla import LoginManager
     login_manager = LoginManager("./db.sqlite3")
-    username = 'admin'
-    password = 'admin_magasin'
+    username = 'naim'
+    password = '123456789'
     user = login_manager.authenticate(username, password)
     if user:
         w = GestionStocks(user)
