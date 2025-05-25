@@ -65,13 +65,35 @@ class Database:
         result = self.fetch_namedtuple(query, [cat_id])
         return result[0].name
 
+    def update_article(self, article_data, art_id, code):
+        try:
+            with self.connect() as conn:
+                cursor = conn.cursor()
+
+                # Check if code already exists
+                cursor.execute("SELECT art_id FROM magasin_article WHERE code = ? AND art_id != ?", (code, art_id))
+                if cursor.fetchone():
+                    return {'success': False, 'message': f"❌ Article avec ce code {code} existe déjà."}
+
+                update_query = """
+                UPDATE magasin_article
+                SET category_id = ?, code = ?, slug = ?, designation = ?, ref = ?, umesure = ?, emp = ?,
+                    qte = ?, prix = ?, valeur = ?, observation = ?
+                WHERE art_id = ?
+                """
+                cursor.execute(update_query, article_data)
+                conn.commit()
+                return {'success': True, 'message': '✅ Article et mouvement ajoutés avec succès'}
+        except sqlite3.Error as err:
+            return {'success': False, 'message': f'❌ Erreur lors de l\'ajout: {str(err)}'}
+
     def insert_new_article(self, article_data, code, mov_date, qte, prix, user_id):
         try:
             with self.connect() as conn:
                 cursor = conn.cursor()
                 conn.execute("BEGIN")  # Start transaction
 
-                # Check if username already exists
+                # Check if code already exists
                 cursor.execute("SELECT art_id FROM magasin_article WHERE code = ?", (code,))
                 if cursor.fetchone():
                     return {'success': False, 'message': f"❌ Article avec ce code {code} existe déjà."}

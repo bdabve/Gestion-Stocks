@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-from passlib.hash import django_pbkdf2_sha256
+from datetime import datetime
 import sqlite3
+from passlib.hash import django_pbkdf2_sha256
 
 
 class User:
@@ -34,6 +35,11 @@ class LoginManager:
             if result:
                 user_id, uname, hashed_password, is_superuser, groupe = result
                 if django_pbkdf2_sha256.verify(raw_password, hashed_password):
+                    # Update last_login timestamp
+                    now = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+                    cursor.execute("UPDATE auth_user SET last_login = ? WHERE id = ?", (now, user_id))
+                    conn.commit()
+
                     return User(user_id, uname, is_superuser, groupe)
         return None
 

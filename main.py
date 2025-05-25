@@ -517,6 +517,30 @@ class GestionStocks(QtWidgets.QMainWindow):
         rows = self.db_handler.fetch_all(query)
         self.display_records('Users', rows, self.ui.labelUsersCount)
 
+    def search_users(self):
+        """
+        Search for users matching the keyword in username, email, first_name, or last_name.
+
+        Parameters:
+            keyword (str): the search keyword.
+        """
+        keyword = self.ui.lineEditSearchUser.text()
+        # logger.info(f'Search users with keyword: {keyword}')
+        query = f"""
+        SELECT {', '.join(widgets.user_fields)}
+        FROM auth_user
+        LEFT JOIN accounts_profile AS p ON auth_user.id = p.user_id
+        WHERE username LIKE ?
+            OR email LIKE ?
+            OR first_name LIKE ?
+            OR last_name LIKE ?
+            OR p.poste_travaille LIKE ?
+        ORDER BY date_joined DESC
+        """
+        like_keyword = f"%{keyword}%"
+        rows = self.db_handler.fetch_all(query, (like_keyword,) * 5)
+        self.display_records('Users', rows, self.ui.labelUsersCount)
+
     def users_by_groupe(self):
         """
         Display Users By Groupe
@@ -757,8 +781,8 @@ if __name__ == '__main__':
         # sys.exit(app.exec_())
     from dekhla import LoginManager
     login_manager = LoginManager("./db.sqlite3")
-    username = 'naim'
-    password = '123456789'
+    username = 'admin'
+    password = 'admin_magasin'
     user = login_manager.authenticate(username, password)
     if user:
         w = GestionStocks(user)

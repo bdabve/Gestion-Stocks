@@ -24,7 +24,7 @@ product_fields = ['art_id', 'code', 'designation', 'ref', 'emp', 'umesure', 'qte
 product_headers = ['ID', 'Code', 'Designation', 'Reference', 'EMP', 'UM', 'Qte', 'Prix', 'Valeur']
 
 user_fields = [
-    'auth_user.id', 'DATE(last_login)', 'username', 'email', 'first_name', 'last_name',
+    'auth_user.id', 'IFNULL(DATE(last_login), "")', 'username', 'email', 'first_name', 'last_name',
     'p.poste_travaille', 'p.groupe', 'DATE(date_joined)',
 ]
 
@@ -46,13 +46,13 @@ def interface_callbacks(root):
             qta.icon('ri.parking-box-fill', color='#ffffff'),
             lambda: root.goto_page('Magasin')
         ),
+        (root.ui.pushButtonSearch, qta.icon('ri.search-line', color=WHITE_COLOR), root.search_article,),  # -- Search Article
         (root.ui.newCatBtn, qta.icon('ri.add-fill', color=NEW_COLOR), root.new_category),              # -- New Category
         (root.ui.newArticleBtn, qta.icon('ri.add-fill', color=NEW_COLOR), root.new_article),           # -- New Article
         (root.ui.editArticleBtn, qta.icon('mdi.clipboard-edit', color="#25CCF7"), root.edit_article),  # -- Edit Article
         (root.ui.newEntryBtn, qta.icon('ri.login-circle-line', color="#44e37b"), root.article_new_entry),  # -- New Entree
         (root.ui.newSortieBtn, qta.icon('ri.logout-circle-r-line', color="#ee4"), root.article_new_sortie),  # --Sortie Article
         (root.ui.delArticleBtn, qta.icon('msc.trashcan', color=TRASH_COLOR), root.delete_article),    # -- Delete Article
-        (root.ui.pushButtonSearch, qta.icon('ri.search-line', color=WHITE_COLOR), root.search_article,),  # -- Search Article
         (root.ui.movArticleBtn, qta.icon('ri.arrow-left-right-line', color=WHITE_COLOR), False),    # -- Movement Article
 
         # --- USERS PAGE ---
@@ -61,6 +61,7 @@ def interface_callbacks(root):
             False,
             lambda: root.goto_page(page='Users')
         ),
+        (root.ui.btnSearchUsers, qta.icon('ri.search-line', color=WHITE_COLOR), root.search_users),  # -- Search Article
         (root.ui.newUserBtn, qta.icon('ri.user-add-line', color=NEW_COLOR), root.new_user),            # -- New User --
         (root.ui.editUserBtn, qta.icon('ri.user-settings-line', color='#0097e6'), root.edit_user),      # -- Edit User --
         (root.ui.changePasswordBtn, qta.icon('ri.lock-password-line', color=NEW_COLOR), root.change_password),  # Change Passwd
@@ -110,7 +111,8 @@ def interface_callbacks(root):
     root.ui.cbBoxCommandStatus.currentIndexChanged.connect(root.command_by_status)
 
     # --- LineEdits
-    root.ui.lineEditSearch.returnPressed.connect(root.search_article)
+    root.ui.lineEditSearch.textChanged.connect(root.search_article)
+    root.ui.lineEditSearchUser.textChanged.connect(root.search_users)
 
     # --- TableWidgets
     root.ui.tableWidgetProduct.itemSelectionChanged.connect(lambda: root.enable_buttons(page='Magasin'))
@@ -467,21 +469,13 @@ class ArticleDialog(QtWidgets.QDialog):
         qte = self.ui.spinBoxQteEdit.value()
         prix = self.ui.dSBoxPrixEdit.value()
         valeur = qte * prix
-
-        query = """
-            UPDATE magasin_article
-            SET category_id = ?, code = ?, slug = ?, designation = ?, ref = ?, umesure = ?, emp = ?,
-                qte = ?, prix = ?, valeur = ?, observation = ?
-            WHERE art_id = ?
-        """
-        params = [cat_id, code, slug, desig, ref, um, emp, qte, prix, valeur, obs, art_id]
+        article_data = [cat_id, code, slug, desig, ref, um, emp, qte, prix, valeur, obs, art_id]
 
         logger.debug('-' * 30)
-        logger.debug(f'Update Article with id: {art_id}')
-        logger.debug(f'Category {category}')
-        logger.debug(f"New Values: {params}")
+        logger.debug(f"Update Article with id: {art_id}")
+        logger.debug(f"New Values: {article_data}")
 
-        result = self.db_handler.execute_query(query, params)
+        result = self.db_handler.update_article(article_data, art_id, code)
         if result['success']:
             logger.info("✅ Article mis à jour avec succès")
             self.set_edit_mode(False)
@@ -489,7 +483,7 @@ class ArticleDialog(QtWidgets.QDialog):
             self.accept()  # close dialog if it's a QDialog
         else:
             logger.error(f"❌ Échec de la mise à jour de l'article {result['message']}")
-            self.show_error(self.ui.labelEditError, "Erreur lors de la mise à jour de l'article")
+            self.show_error(self.ui.labelEditError, f"{result['message']}")
 
     def confirm_dialog(self, msg):
         self.ui.titleLabel.setText("Confirmation")
