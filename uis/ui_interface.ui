@@ -975,7 +975,7 @@ Content App */
                    <cursorShape>PointingHandCursor</cursorShape>
                   </property>
                   <property name="toolTip">
-                   <string>Product Page</string>
+                   <string>Liste des Produits</string>
                   </property>
                   <property name="statusTip">
                    <string>Articles</string>
@@ -1037,7 +1037,7 @@ Content App */
                    <cursorShape>PointingHandCursor</cursorShape>
                   </property>
                   <property name="toolTip">
-                   <string>Movement Page</string>
+                   <string>Liste des Movementes</string>
                   </property>
                   <property name="statusTip">
                    <string>Movements</string>
@@ -1070,6 +1070,9 @@ Content App */
                  <widget class="QPushButton" name="buttonCommandePage">
                   <property name="cursor">
                    <cursorShape>PointingHandCursor</cursorShape>
+                  </property>
+                  <property name="toolTip">
+                   <string>Liste des Commandes</string>
                   </property>
                   <property name="statusTip">
                    <string>Commande</string>
@@ -1124,8 +1127,11 @@ Content App */
                   <property name="cursor">
                    <cursorShape>PointingHandCursor</cursorShape>
                   </property>
+                  <property name="toolTip">
+                   <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Liste des Utilisateur&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                  </property>
                   <property name="statusTip">
-                   <string>Les Utilisateur</string>
+                   <string/>
                   </property>
                   <property name="layoutDirection">
                    <enum>Qt::LeftToRight</enum>
@@ -1177,8 +1183,11 @@ Content App */
                   <property name="cursor">
                    <cursorShape>PointingHandCursor</cursorShape>
                   </property>
+                  <property name="toolTip">
+                   <string>Historique des Articles</string>
+                  </property>
                   <property name="statusTip">
-                   <string>Historique</string>
+                   <string/>
                   </property>
                   <property name="layoutDirection">
                    <enum>Qt::LeftToRight</enum>
@@ -1233,11 +1242,27 @@ Content App */
                   <property name="cursor">
                    <cursorShape>PointingHandCursor</cursorShape>
                   </property>
+                  <property name="toolTip">
+                   <string>Close Application</string>
+                  </property>
                   <property name="layoutDirection">
                    <enum>Qt::LeftToRight</enum>
                   </property>
+                  <property name="styleSheet">
+                   <string notr="true">background-image: url(:/icons/icons/icon_close.png);</string>
+                  </property>
                   <property name="text">
-                   <string>Exit</string>
+                   <string> Exit</string>
+                  </property>
+                  <property name="icon">
+                   <iconset resource="../resource.qrc">
+                    <normaloff>:/icons/icons/icon_close.png</normaloff>:/icons/icons/icon_close.png</iconset>
+                  </property>
+                  <property name="iconSize">
+                   <size>
+                    <width>20</width>
+                    <height>20</height>
+                   </size>
                   </property>
                  </widget>
                 </item>

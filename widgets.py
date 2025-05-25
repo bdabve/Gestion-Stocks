@@ -38,6 +38,7 @@ def interface_callbacks(root):
         (root.ui.toggleMenuButton, False, lambda: root.toggle_menu()),
         (root.ui.toggleLeftBox, False, lambda: root.toggle_left_box()),     # -- Toggle left box
         (root.ui.extraCloseColumnBtn, False, root.toggle_left_box),         # -- Toggle extra column
+        (root.ui.buttonExitPage, False, root.close),
 
         # -- MAGASIN PAGE --
         (
