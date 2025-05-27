@@ -318,7 +318,9 @@ class ArticleDialog(QtWidgets.QDialog):
         # self.adjustSize()  # Automatically fit size
         self.resize(200, 100)
 
-    # ----------------------------------------------------------------------------------
+    # ------------------------------------------------------------------------------------
+    # -- Article PAGE
+    # ----------------
     def new_category(self):
         """
         Show the New Category Page
@@ -341,7 +343,11 @@ class ArticleDialog(QtWidgets.QDialog):
             self.accept()
         else:
             logger.error(f"❌ Échec de l'ajout de la catégorie {result['message']}")
-            self.show_error(self.ui.labelCategoryError, "Erreur lors de l'ajout de la catégorie")
+            if "UNIQUE constraint failed" in result["message"]:
+                error_msg = "Catégory avec ce nom exist déja"
+            else:
+                error_msg = "Error lors de l'ajout. vérifier les donnée"
+            self.show_error(self.ui.labelCategoryError, error_msg)
 
     def new_article(self):
         self.ui.titleLabel.setText("Nouvel Article")
@@ -570,7 +576,7 @@ class ArticleDialog(QtWidgets.QDialog):
 
     # ------------------------------------------------------------------------------------
     # -- USERS PAGE
-    # -------------
+    # --------------
     def setup_login(self):
         logger.info('Getting User Credentials')
         self.ui.titleLabel.setText("Login")

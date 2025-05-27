@@ -123,7 +123,7 @@ class Database:
                 conn.commit()
                 return {'success': True, 'lastrowid': art_id, 'message': '✅ Article et mouvement ajoutés avec succès'}
         except sqlite3.Error as err:
-            return {'success': False, 'message': f'❌ Erreur lors de l\'ajout: {str(err)}'}
+            return {'success': False, 'message': f"❌ Erreur lors de l'ajout: {str(err)}"}
 
     def article_has_movement(self, art_id):
         """

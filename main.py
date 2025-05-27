@@ -37,7 +37,7 @@ class GestionStocks(QtWidgets.QMainWindow):
         self.display_date()
         self.goto_page('Magasin')
 
-    # *********************************************
+    # *******************************************************************
     #   => GLOBAL FUNCTIONS
     # ************************
     def apply_role_permissions(self):
@@ -126,7 +126,45 @@ class GestionStocks(QtWidgets.QMainWindow):
         # Start the animation
         self.close_animation.start()
 
-    # ---------------------------------------------------------------------
+    def display_records(self, page, rows, label_count, msg=None):
+        """
+        Display records in the appropriate table widget based on the page.
+        switch the stackedWidget to the appropriate page
+        :page: Products, Movement, Users
+        :rows: the result from the database
+        :label_count: the label that display the count
+        :msg: message to display in the count label
+        """
+        if page == 'Products':
+            headers = self.product_headers
+            tableWidget = self.ui.tableWidgetProduct
+            st_page = self.ui.MagasinPage
+
+        elif page == 'Movements':
+            headers = ['Date', 'User', 'Operation', 'Code', 'Designaton', 'Qte', 'Prix']
+            tableWidget = self.ui.tableWidgetMovement
+            st_page = self.ui.MovementPage
+
+        elif page == 'Users':
+            headers = ['ID', 'Last Login', 'Username', 'Email', 'First Name', 'Last Name',
+                       'Poste Travaille', 'Groupe', 'Date Joined',]
+            tableWidget = self.ui.tableWidgetUsers
+            st_page = self.ui.UsersPage
+
+        elif page == 'Commande':
+            headers = ['ID', 'Date', 'User', 'Code', 'Designation', 'Qte', 'Status']
+            tableWidget = self.ui.tableWidgetCommand
+            st_page = self.ui.CommandePage
+
+        if msg:
+            label_count.setText(f"{msg} ({len(rows)})")
+        else:
+            label_count.setText(f"Total {page}: {len(rows)}.")
+
+        utils.populate_table_widget(tableWidget, rows, headers)
+        self.ui.stackedWidget.setCurrentWidget(st_page)
+
+    # -- Toggle Left Menu and Left Box Settings (not implemented yet) --
     def toggle_menu(self, action='open'):
         """
         This will animate the Client/Product badge up/down
@@ -165,7 +203,7 @@ class GestionStocks(QtWidgets.QMainWindow):
         self.anim_left_frame.setEasingCurve(QtCore.QEasingCurve.InOutQuart)
         self.anim_left_frame.start()
 
-    # ---------------------------------------------------------------------
+    # -- Switch between Pages -- Enable or disable Buttons --
     def goto_page(self, page: str):
         """
         Navigate to the specified page and update UI elements accordingly.
@@ -265,45 +303,7 @@ class GestionStocks(QtWidgets.QMainWindow):
         self.ui.labelDate.setText(str(tday))
         self.ui.labelHijri.setText(str(hijri))
 
-    def display_records(self, page, rows, label_count, msg=None):
-        """
-        Display records in the appropriate table widget based on the page.
-        switch the stackedWidget to the appropriate page
-        :page: Products, Movement, Users
-        :rows: the result from the database
-        :label_count: the label that display the count
-        :msg: message to display in the count label
-        """
-        if page == 'Products':
-            headers = self.product_headers
-            tableWidget = self.ui.tableWidgetProduct
-            st_page = self.ui.MagasinPage
-
-        elif page == 'Movements':
-            headers = ['Date', 'User', 'Operation', 'Code', 'Designaton', 'Qte', 'Prix']
-            tableWidget = self.ui.tableWidgetMovement
-            st_page = self.ui.MovementPage
-
-        elif page == 'Users':
-            headers = ['ID', 'Last Login', 'Username', 'Email', 'First Name', 'Last Name',
-                       'Poste Travaille', 'Groupe', 'Date Joined',]
-            tableWidget = self.ui.tableWidgetUsers
-            st_page = self.ui.UsersPage
-
-        elif page == 'Commande':
-            headers = ['ID', 'Date', 'User', 'Code', 'Designation', 'Qte', 'Status']
-            tableWidget = self.ui.tableWidgetCommand
-            st_page = self.ui.CommandePage
-
-        if msg:
-            label_count.setText(f"{msg} ({len(rows)})")
-        else:
-            label_count.setText(f"Total {page}: {len(rows)}.")
-
-        utils.populate_table_widget(tableWidget, rows, headers)
-        self.ui.stackedWidget.setCurrentWidget(st_page)
-
-    # ---------------------------------------------------------------------
+    # -- Menu Functions --
     def stock_alert(self):
         """
         Display all stocks that have quantity = 0
@@ -334,8 +334,8 @@ class GestionStocks(QtWidgets.QMainWindow):
             logger.debug(f"t_article({total_article}); t_valeur({valeur}); t_qte({total_qte})")
 
     # *****************************************************************
-    #   => Articles Page
-    # ************************
+    #   => Products Page
+    # *******************
     def display_categories(self):
         """
         Display categories in the comboBoxCategory
@@ -459,7 +459,7 @@ class GestionStocks(QtWidgets.QMainWindow):
 
     def article_new_entry(self):
         """
-        Open the dialog for new article entry
+        Open the dialog for Nouvelle Entrée
         """
         art_id = self.get_item_id(self.ui.tableWidgetProduct)
         dialog = ArticleDialog(user_id=self.user.id, db_handler=self.db_handler)
@@ -470,7 +470,7 @@ class GestionStocks(QtWidgets.QMainWindow):
 
     def article_new_sortie(self):
         """
-        Open the dialog for new article entry
+        Open the dialog for Nouvelle Sortie
         """
         art_id = self.get_item_id(self.ui.tableWidgetProduct)
         dialog = ArticleDialog(user_id=self.user.id, db_handler=self.db_handler)

@@ -908,7 +908,7 @@ Content App */
                   </property>
                   <property name="icon">
                    <iconset resource="../resource.qrc">
-                    <normaloff>:/icons/icons/cil-caret-left.png</normaloff>:/icons/icons/cil-caret-left.png</iconset>
+                    <normaloff>:/icons/icons/cil-x.png</normaloff>:/icons/icons/cil-x.png</iconset>
                   </property>
                   <property name="iconSize">
                    <size>
@@ -1078,14 +1078,14 @@ Content App */
                    <string>Commande</string>
                   </property>
                   <property name="styleSheet">
-                   <string notr="true">background-image: url(:/icons/icons/report.png);</string>
+                   <string notr="true">background-image: url(:/icons/icons/cil-truck.png);</string>
                   </property>
                   <property name="text">
                    <string>Commande</string>
                   </property>
                   <property name="icon">
                    <iconset resource="../resource.qrc">
-                    <normaloff>:/icons/icons/report.png</normaloff>:/icons/icons/report.png</iconset>
+                    <normaloff>:/icons/icons/cil-truck.png</normaloff>:/icons/icons/cil-truck.png</iconset>
                   </property>
                   <property name="iconSize">
                    <size>
@@ -4188,7 +4188,7 @@ min-width: 90px;</string>
  </widget>
  <resources>
   <include location="../resource.qrc"/>
-  <include location="../../../eljoumou3a_new_version/app/resource.qrc"/>
+  <include location="../resource.qrc"/>
  </resources>
  <connections>
   <connection>
