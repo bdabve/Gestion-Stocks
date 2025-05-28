@@ -2,7 +2,7 @@
 # like buttons and their icons and callbacks
 # and Dialogs
 
-from datetime import date
+import datetime
 from decimal import Decimal
 from PyQt5 import QtWidgets, QtCore, QtGui
 import qtawesome as qta
@@ -19,7 +19,7 @@ TRASH_COLOR = '#f77861'
 WHITE_COLOR = "#FFFFFF"
 # SAVE_COLOR = '#0097e6'
 
-today = date.today()
+today = datetime.date.today()
 product_fields = ['art_id', 'code', 'designation', 'ref', 'emp', 'umesure', 'qte', 'prix', 'valeur']
 product_headers = ['ID', 'Code', 'Designation', 'Reference', 'EMP', 'UM', 'Qte', 'Prix', 'Valeur']
 
@@ -49,7 +49,7 @@ def interface_callbacks(root):
         (root.ui.pushButtonSearch, qta.icon('ri.search-line', color=WHITE_COLOR), root.search_article,),  # -- Search Article
         (root.ui.newCatBtn, qta.icon('ri.add-fill', color=NEW_COLOR), root.new_category),              # -- New Category
         (root.ui.newArticleBtn, qta.icon('ri.add-fill', color=NEW_COLOR), root.new_article),           # -- New Article
-        (root.ui.editArticleBtn, qta.icon('mdi.clipboard-edit', color="#25CCF7"), root.edit_article),  # -- Edit Article
+        (root.ui.editArticleBtn, qta.icon('mdi6.square-edit-outline', color="#25CCF7"), root.edit_article),  # -- Edit Article
         (root.ui.newEntryBtn, qta.icon('ri.login-circle-line', color="#44e37b"), root.article_new_entry),  # -- New Entree
         (root.ui.newSortieBtn, qta.icon('ri.logout-circle-r-line', color="#ee4"), root.article_new_sortie),  # --Sortie Article
         (root.ui.delArticleBtn, qta.icon('msc.trashcan', color=TRASH_COLOR), root.delete_article),    # -- Delete Article
@@ -64,7 +64,7 @@ def interface_callbacks(root):
         (root.ui.btnSearchUsers, qta.icon('ri.search-line', color=WHITE_COLOR), root.search_users),  # -- Search Article
         (root.ui.newUserBtn, qta.icon('ri.user-add-line', color=NEW_COLOR), root.new_user),            # -- New User --
         (root.ui.editUserBtn, qta.icon('ri.user-settings-line', color='#0097e6'), root.edit_user),      # -- Edit User --
-        (root.ui.changePasswordBtn, qta.icon('ri.lock-password-line', color=NEW_COLOR), root.change_password),  # Change Passwd
+        (root.ui.changePasswordBtn, qta.icon('ph.lock-key', color=NEW_COLOR), root.change_password),  # Change Passwd
         (root.ui.delUserBtn, qta.icon('ri.user-unfollow-line', color=TRASH_COLOR), root.delete_user),     # -- Delete User --
 
         # --- MOVEMENT PAGE ---
@@ -80,11 +80,11 @@ def interface_callbacks(root):
         # -- COMMANDE PAGE
         (
             root.ui.buttonCommandePage,
-            # False,
             qta.icon('mdi6.truck-flatbed', color='#ffffff'),
             lambda: root.goto_page('Commande')
         ),
         (root.ui.newCommandBtn, qta.icon('mdi6.truck-plus', color="#EE5A24"), root.new_commande),   # New Commande
+        (root.ui.editCommandBtn, qta.icon('mdi6.square-edit-outline', color="#25CCF7"), root.edit_commande),
         # Active Commande
         (root.ui.activeCommandBtn, qta.icon('mdi.truck-check', color=NEW_COLOR), root.activate_command),
         (root.ui.delCommandBtn, qta.icon('msc.trashcan', color=TRASH_COLOR), root.delete_commande),    # Delete Commande
@@ -117,8 +117,11 @@ def interface_callbacks(root):
     # --- TableWidgets
     root.ui.tableWidgetProduct.itemSelectionChanged.connect(lambda: root.enable_buttons(page='Magasin'))
     root.ui.tableWidgetProduct.itemDoubleClicked.connect(root.article_details)
+
     root.ui.tableWidgetUsers.itemSelectionChanged.connect(lambda: root.enable_buttons(page='Users'))
+
     root.ui.tableWidgetCommand.itemSelectionChanged.connect(lambda: root.enable_buttons(page='Commande'))
+    root.ui.tableWidgetCommand.itemDoubleClicked.connect(root.commande_details)
 
     # --- Menus
     def create_menu(menu_button, icon_name, actions, is_action_with_icon=False):
@@ -201,7 +204,11 @@ def widget_callbacks(root):
         # -- Save && Edit and Save Edit Buttons ---
         (root.ui.btnSaveNewCat, qta.icon('mdi.content-save', color=SAVE_COLOR), root.save_new_category),
         (root.ui.btnSaveNewArticle, qta.icon('mdi.content-save', color=SAVE_COLOR), root.save_new_article),
-        (root.ui.btnEditArticle, qta.icon('mdi6.file-edit-outline', color="#F97F51"), root.toggle_edit_mode),
+        (
+            root.ui.btnEditArticle,
+            qta.icon('mdi6.file-edit-outline', color="#F97F51"),
+            lambda: root.toggle_edit_mode(page='Article')
+        ),
         (root.ui.btnSaveEditArticle, qta.icon('mdi6.content-save', color=SAVE_COLOR), root.update_article),
         (root.ui.btnSearchEmptyCode, qta.icon('ri.search-line', color=WHITE_COLOR), root.get_empty_code),
 
@@ -221,6 +228,12 @@ def widget_callbacks(root):
 
         # -- Commande
         (root.ui.btnSaveCommand, qta.icon('mdi.content-save-outline', color=SAVE_COLOR), root.save_command),
+        (
+            root.ui.btnEditCommand,
+            qta.icon('mdi6.file-edit-outline', color="#F97F51"),
+            lambda: root.toggle_edit_mode(page="Commande")
+        ),
+        (root.ui.btnSaveEditCommand, qta.icon('mdi6.content-save', color=SAVE_COLOR), root.update_command),
     ]
     for button, icon, callback in buttons:
         if icon: button.setIcon(icon)
@@ -237,6 +250,7 @@ class ArticleDialog(QtWidgets.QDialog):
 
         self.user = None
         self.edit_mode = False
+        self.edit_mode_commande = False
 
         # Remove title bar
         self.setWindowFlags(QtCore.Qt.FramelessWindowHint)
@@ -249,7 +263,7 @@ class ArticleDialog(QtWidgets.QDialog):
             self.ui.labelEditError,
             self.ui.labelEntreeError, self.ui.labelSortieError,
             self.ui.labelAddUserErrors, self.ui.labelEditUserErrors, self.ui.labelLoginErrors, self.ui.labelChangePassErrors,
-            self.ui.labelCommandError
+            self.ui.labelCommandError, self.ui.labelEditCommandError,
         ]
         for label in error_labels:
             label.setText('')
@@ -271,12 +285,17 @@ class ArticleDialog(QtWidgets.QDialog):
                 self.clickPosition = e.globalPos()
                 e.accept()
 
-    def toggle_edit_mode(self):
+    def toggle_edit_mode(self, page='Article'):
         """
-        Toggle the edit mode for the edit article.
+        Toggle the edit mode for = edit article | edit commande.
         """
-        self.edit_mode = not self.edit_mode  # Toggle state
-        self.set_edit_mode(self.edit_mode)
+        if page == 'Article':
+            self.edit_mode = not self.edit_mode
+            self.set_edit_mode(self.edit_mode, page=page)
+
+        elif page == 'Commande':
+            self.edit_mode_commande = not self.edit_mode_commande  # Toggle state
+            self.set_edit_mode(self.edit_mode_commande, page=page)
 
     def populate_cbbox_category(self, comboBoxName):
         """
@@ -404,23 +423,30 @@ class ArticleDialog(QtWidgets.QDialog):
             self.ui.labelEmptyCodeError.setText(f"Erreur: {result['message']}")
 
     # ----------------------------------------------------------------------------------
-    def set_edit_mode(self, editable: bool):
+    def set_edit_mode(self, editable: bool, page='Article'):
         """
         Set the edit mode for the article update.
         """
-        widgets = [
-            self.ui.cbBoxCatEdit,
-            self.ui.lineEditCodeEdit,
-            self.ui.lineEditDesigEdit,
-            self.ui.lineEditRefEdit,
-            self.ui.lineEditUMEdit,
-            self.ui.lineEditEmpEdit,
-            self.ui.spinBoxQteEdit,
-            self.ui.dSBoxPrixEdit,
-            self.ui.dSBoxValeurEdit,
-            self.ui.textEditObsEdit,
-            self.ui.btnSaveEditArticle
-        ]
+        if page == 'Article':
+            widgets = [
+                self.ui.cbBoxCatEdit,
+                self.ui.lineEditCodeEdit,
+                self.ui.lineEditDesigEdit,
+                self.ui.lineEditRefEdit,
+                self.ui.lineEditUMEdit,
+                self.ui.lineEditEmpEdit,
+                self.ui.spinBoxQteEdit,
+                self.ui.dSBoxPrixEdit,
+                self.ui.dSBoxValeurEdit,
+                self.ui.textEditObsEdit,
+                self.ui.btnSaveEditArticle
+            ]
+        elif page == 'Commande':
+            widgets = [
+                self.ui.dateEditCommandDateEdit,
+                self.ui.spBoxEditCommandQte,
+                self.ui.btnSaveEditCommand,
+            ]
 
         for widget in widgets:
             widget.setEnabled(editable)
@@ -453,7 +479,8 @@ class ArticleDialog(QtWidgets.QDialog):
         category_name = self.db_handler.get_category_name(category_id)
         self.populate_cbbox_category(self.ui.cbBoxCatEdit)
         self.ui.cbBoxCatEdit.setCurrentText(category_name)
-        self.set_edit_mode(editable=edit_mode)
+        self.set_edit_mode(editable=edit_mode, page="Article")
+        self.edit_mode = not self.edit_mode
         self.resize_dialog(current_page=self.ui.EditArticlePage)
 
     def update_article(self):
@@ -484,7 +511,7 @@ class ArticleDialog(QtWidgets.QDialog):
         result = self.db_handler.update_article(article_data, art_id, code)
         if result['success']:
             logger.info("✅ Article mis à jour avec succès")
-            self.set_edit_mode(False)
+            self.set_edit_mode(editable=False, page="Article")
             self.edit_mode = not self.edit_mode  # Toggle state
             self.accept()  # close dialog if it's a QDialog
         else:
@@ -713,3 +740,45 @@ class ArticleDialog(QtWidgets.QDialog):
             logger.error(f"❌ Échec de l'Ajout de la Commande: {result['message']}")
             self.show_message(self.ui.labelCommandError, "Erreur lors de l'ajout de l'Entrée")
         logger.debug('\n')
+
+    def commande_details(self, command_id, edit_mode=False):
+        fields = ['c.command_id', 'c.command_date', 'art.code', 'c.qte']
+        query = f"""SELECT {', '.join(fields)} FROM magasin_command AS c
+                    LEFT JOIN magasin_article AS art ON c.art_id_id = art.art_id
+                    WHERE command_id = ?"""
+        rows = self.db_handler.fetch_namedtuple(query, command_id)
+        if rows:
+            command = rows[0]
+            self.ui.titleLabel.setText(f"Commande N° {command.command_id}")
+            self.setup_label_id(self.ui.editCommandCmdID, command.command_id)
+
+            cmd_date = utils.parse_date(command.command_date)
+            self.ui.dateEditCommandDateEdit.setDate(cmd_date)
+            self.ui.lineEditEditCommandCode.setText(command.code)
+            self.ui.spBoxEditCommandQte.setValue(command.qte)
+        self.set_edit_mode(editable=edit_mode, page="Commande")
+        self.edit_mode_commande = not self.edit_mode_commande
+        self.resize_dialog(current_page=self.ui.EditCommandPage)
+
+    def update_command(self):
+        """
+        Update the commande in the database.
+        This will update just the date and qte
+        """
+        cmd_id = self.ui.editCommandCmdID.text()
+        cmd_date = self.ui.dateEditCommandDateEdit.date().toPyDate()
+        code = self.ui.lineEditEditCommandCode.text().upper()
+        qte = self.ui.spBoxEditCommandQte.value()
+        logger.debug('-' * 30)
+        logger.debug(f"Update Commande with id: {cmd_id}")
+        logger.debug(f"New Values: {(code), (qte), (cmd_date)}")
+        query = "UPDATE magasin_command SET command_date = ?, qte = ? WHERE command_id = ?"
+        result = self.db_handler.execute_query(query, [cmd_date, qte, cmd_id])
+        if result['success']:
+            logger.info('Command Updated Successfully.')
+            self.set_edit_mode(editable=False, page="Commande")
+            self.edit_mode_commande = not self.edit_mode_commande
+            self.accept()
+        else:
+            logger.error(f"Error updating commande: {result['message']}")
+            self.show_error(self.ui.labelEditCommandError, f"{result['message']}")

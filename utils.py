@@ -1,7 +1,19 @@
 from PyQt5 import QtWidgets
+from datetime import datetime
 
 Error_COLOR = "#f77861"
 Success_COLOR = "#44e37b"
+
+
+def parse_date(date_str):
+    """Parses a date string and returns a QDate."""
+    try:
+        # Try format with time
+        dt = datetime.strptime(date_str, "%Y-%m-%d %H:%M:%S")
+    except ValueError:
+        # Fallback to date-only format
+        dt = datetime.strptime(date_str, "%Y-%m-%d")
+    return dt
 
 
 def pagebuttons_stats(root):

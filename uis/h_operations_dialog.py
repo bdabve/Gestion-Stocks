@@ -14,7 +14,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_Dialog(object):
     def setupUi(self, Dialog):
         Dialog.setObjectName("Dialog")
-        Dialog.resize(518, 753)
+        Dialog.resize(523, 739)
         Dialog.setStyleSheet("#MainWidget {\n"
 "    border-radius: 10px;\n"
 "    border: 3px solid #4a4a4a;\n"
@@ -45,7 +45,8 @@ class Ui_Dialog(object):
 "#EditUserPage,\n"
 "#ChangePasswordPage,\n"
 "\n"
-"#NewCommandPage\n"
+"#NewCommandPage,\n"
+"#EditCommandPage\n"
 "{\n"
 "    background-color: rgb(40, 44, 52);\n"
 "}\n"
@@ -81,7 +82,8 @@ class Ui_Dialog(object):
 "#labelEditUserErrors,\n"
 "#labelChangePassErrors,\n"
 "\n"
-"#labelCommandError {    \n"
+"#labelCommandError,\n"
+"#labelEditCommandError {    \n"
 "    color: #e55039;\n"
 "    padding: 10px 0px;\n"
 "}\n"
@@ -609,7 +611,7 @@ class Ui_Dialog(object):
         self.EditArticlePage = QtWidgets.QWidget()
         self.EditArticlePage.setObjectName("EditArticlePage")
         self.verticalLayout_4 = QtWidgets.QVBoxLayout(self.EditArticlePage)
-        self.verticalLayout_4.setContentsMargins(10, 15, 10, 5)
+        self.verticalLayout_4.setContentsMargins(10, 15, 10, 15)
         self.verticalLayout_4.setObjectName("verticalLayout_4")
         self.frame = QtWidgets.QFrame(self.EditArticlePage)
         self.frame.setObjectName("frame")
@@ -1333,11 +1335,91 @@ class Ui_Dialog(object):
         spacerItem11 = QtWidgets.QSpacerItem(20, 353, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
         self.verticalLayout_11.addItem(spacerItem11)
         self.stackedWidget.addWidget(self.NewCommandPage)
+        self.EditCommandPage = QtWidgets.QWidget()
+        self.EditCommandPage.setObjectName("EditCommandPage")
+        self.verticalLayout_15 = QtWidgets.QVBoxLayout(self.EditCommandPage)
+        self.verticalLayout_15.setContentsMargins(-1, -1, -1, 20)
+        self.verticalLayout_15.setObjectName("verticalLayout_15")
+        self.frame_10 = QtWidgets.QFrame(self.EditCommandPage)
+        self.frame_10.setMinimumSize(QtCore.QSize(0, 0))
+        self.frame_10.setFrameShape(QtWidgets.QFrame.NoFrame)
+        self.frame_10.setFrameShadow(QtWidgets.QFrame.Raised)
+        self.frame_10.setObjectName("frame_10")
+        self.horizontalLayout_3 = QtWidgets.QHBoxLayout(self.frame_10)
+        self.horizontalLayout_3.setContentsMargins(0, 0, 0, -1)
+        self.horizontalLayout_3.setObjectName("horizontalLayout_3")
+        self.btnEditCommand = QtWidgets.QPushButton(self.frame_10)
+        self.btnEditCommand.setText("")
+        self.btnEditCommand.setIconSize(QtCore.QSize(25, 25))
+        self.btnEditCommand.setObjectName("btnEditCommand")
+        self.horizontalLayout_3.addWidget(self.btnEditCommand)
+        spacerItem12 = QtWidgets.QSpacerItem(382, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
+        self.horizontalLayout_3.addItem(spacerItem12)
+        self.btnSaveEditCommand = QtWidgets.QPushButton(self.frame_10)
+        self.btnSaveEditCommand.setEnabled(False)
+        self.btnSaveEditCommand.setText("")
+        self.btnSaveEditCommand.setIconSize(QtCore.QSize(25, 25))
+        self.btnSaveEditCommand.setObjectName("btnSaveEditCommand")
+        self.horizontalLayout_3.addWidget(self.btnSaveEditCommand)
+        self.verticalLayout_15.addWidget(self.frame_10)
+        self.frame_9 = QtWidgets.QFrame(self.EditCommandPage)
+        self.frame_9.setObjectName("frame_9")
+        self.gridLayout_3 = QtWidgets.QGridLayout(self.frame_9)
+        self.gridLayout_3.setContentsMargins(0, 0, 0, 0)
+        self.gridLayout_3.setObjectName("gridLayout_3")
+        self.spBoxEditCommandQte = QtWidgets.QSpinBox(self.frame_9)
+        self.spBoxEditCommandQte.setEnabled(False)
+        self.spBoxEditCommandQte.setMinimumSize(QtCore.QSize(314, 34))
+        self.spBoxEditCommandQte.setButtonSymbols(QtWidgets.QAbstractSpinBox.NoButtons)
+        self.spBoxEditCommandQte.setMinimum(1)
+        self.spBoxEditCommandQte.setMaximum(1000000000)
+        self.spBoxEditCommandQte.setObjectName("spBoxEditCommandQte")
+        self.gridLayout_3.addWidget(self.spBoxEditCommandQte, 2, 1, 1, 1)
+        self.labelEditCommandError = QtWidgets.QLabel(self.frame_9)
+        self.labelEditCommandError.setObjectName("labelEditCommandError")
+        self.gridLayout_3.addWidget(self.labelEditCommandError, 3, 1, 1, 1)
+        self.label_35 = QtWidgets.QLabel(self.frame_9)
+        self.label_35.setMinimumSize(QtCore.QSize(85, 0))
+        self.label_35.setMaximumSize(QtCore.QSize(79, 30))
+        self.label_35.setObjectName("label_35")
+        self.gridLayout_3.addWidget(self.label_35, 2, 0, 1, 1)
+        self.dateEditCommandDateEdit = QtWidgets.QDateEdit(self.frame_9)
+        self.dateEditCommandDateEdit.setEnabled(False)
+        self.dateEditCommandDateEdit.setWrapping(False)
+        self.dateEditCommandDateEdit.setFrame(True)
+        self.dateEditCommandDateEdit.setButtonSymbols(QtWidgets.QAbstractSpinBox.NoButtons)
+        self.dateEditCommandDateEdit.setDateTime(QtCore.QDateTime(QtCore.QDate(2025, 1, 1), QtCore.QTime(0, 0, 0)))
+        self.dateEditCommandDateEdit.setCurrentSection(QtWidgets.QDateTimeEdit.DaySection)
+        self.dateEditCommandDateEdit.setCalendarPopup(False)
+        self.dateEditCommandDateEdit.setObjectName("dateEditCommandDateEdit")
+        self.gridLayout_3.addWidget(self.dateEditCommandDateEdit, 0, 1, 1, 1)
+        self.label_37 = QtWidgets.QLabel(self.frame_9)
+        self.label_37.setMinimumSize(QtCore.QSize(85, 0))
+        self.label_37.setMaximumSize(QtCore.QSize(79, 30))
+        self.label_37.setObjectName("label_37")
+        self.gridLayout_3.addWidget(self.label_37, 1, 0, 1, 1)
+        self.editCommandCmdID = QtWidgets.QLabel(self.frame_9)
+        self.editCommandCmdID.setText("")
+        self.editCommandCmdID.setObjectName("editCommandCmdID")
+        self.gridLayout_3.addWidget(self.editCommandCmdID, 3, 0, 1, 1)
+        self.label_36 = QtWidgets.QLabel(self.frame_9)
+        self.label_36.setObjectName("label_36")
+        self.gridLayout_3.addWidget(self.label_36, 0, 0, 1, 1)
+        self.lineEditEditCommandCode = QtWidgets.QLineEdit(self.frame_9)
+        self.lineEditEditCommandCode.setEnabled(False)
+        self.lineEditEditCommandCode.setMinimumSize(QtCore.QSize(314, 34))
+        self.lineEditEditCommandCode.setReadOnly(True)
+        self.lineEditEditCommandCode.setObjectName("lineEditEditCommandCode")
+        self.gridLayout_3.addWidget(self.lineEditEditCommandCode, 1, 1, 1, 1)
+        self.verticalLayout_15.addWidget(self.frame_9)
+        spacerItem13 = QtWidgets.QSpacerItem(20, 339, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
+        self.verticalLayout_15.addItem(spacerItem13)
+        self.stackedWidget.addWidget(self.EditCommandPage)
         self.verticalLayout_13.addWidget(self.stackedWidget)
         self.verticalLayout.addWidget(self.MainWidget)
 
         self.retranslateUi(Dialog)
-        self.stackedWidget.setCurrentIndex(1)
+        self.stackedWidget.setCurrentIndex(12)
         QtCore.QMetaObject.connectSlotsByName(Dialog)
 
     def retranslateUi(self, Dialog):
@@ -1449,4 +1531,8 @@ class Ui_Dialog(object):
         self.labelCommandError.setText(_translate("Dialog", "Label Error"))
         self.label_33.setText(_translate("Dialog", "Date"))
         self.label_32.setText(_translate("Dialog", "Code"))
+        self.labelEditCommandError.setText(_translate("Dialog", "Label Error"))
+        self.label_35.setText(_translate("Dialog", "Quantité"))
+        self.label_37.setText(_translate("Dialog", "Code"))
+        self.label_36.setText(_translate("Dialog", "Date"))
 import resource_rc

@@ -729,6 +729,28 @@ class GestionStocks(QtWidgets.QMainWindow):
             self.show_error_message('Commande Ajouté avec succés', success=True)
             self.goto_page('Commande')
 
+    def commande_details(self):
+        """
+        Open the dialog for article details and update
+        """
+        art_id = self.get_item_id(self.ui.tableWidgetCommand)
+        dialog = ArticleDialog(user_id=self.user.id, db_handler=self.db_handler)
+        dialog.commande_details(art_id)
+        if dialog.exec_() == QtWidgets.QDialog.Accepted:
+            self.show_error_message('Commande modifié avec succès', success=True)
+            self.goto_page('Commande')
+
+    def edit_commande(self):
+        """
+        This will open the article detail with edit mode enabled
+        """
+        cmd_id = self.get_item_id(self.ui.tableWidgetCommand)
+        dialog = ArticleDialog(user_id=self.user.id, db_handler=self.db_handler)
+        dialog.commande_details(cmd_id, edit_mode=True)
+        if dialog.exec_() == QtWidgets.QDialog.Accepted:
+            self.show_error_message('Commande modifié avec succès', success=True)
+            self.goto_page('Commande')
+
     def delete_commande(self):
         """
         Delete Commande from database

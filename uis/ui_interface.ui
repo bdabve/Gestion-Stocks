@@ -1888,7 +1888,7 @@ p, li { white-space: pre-wrap; }
              <string notr="true"/>
             </property>
             <property name="currentIndex">
-             <number>0</number>
+             <number>3</number>
             </property>
             <widget class="QWidget" name="MagasinPage">
              <layout class="QVBoxLayout" name="verticalLayout_4">
@@ -3201,29 +3201,6 @@ min-width: 90px;</string>
                       </property>
                      </spacer>
                     </item>
-                    <item>
-                     <widget class="QPushButton" name="pushButton_2">
-                      <property name="contextMenuPolicy">
-                       <enum>Qt::CustomContextMenu</enum>
-                      </property>
-                      <property name="styleSheet">
-                       <string notr="true">padding: 0px 7px;</string>
-                      </property>
-                      <property name="text">
-                       <string>   Actions</string>
-                      </property>
-                      <property name="icon">
-                       <iconset resource="../resource.qrc">
-                        <normaloff>:/icons/icons/cil-chart.png</normaloff>:/icons/icons/cil-chart.png</iconset>
-                      </property>
-                      <property name="iconSize">
-                       <size>
-                        <width>20</width>
-                        <height>20</height>
-                       </size>
-                      </property>
-                     </widget>
-                    </item>
                    </layout>
                   </widget>
                  </item>
@@ -3739,29 +3716,6 @@ min-width: 90px;</string>
                        </size>
                       </property>
                      </spacer>
-                    </item>
-                    <item>
-                     <widget class="QPushButton" name="pushButton_3">
-                      <property name="contextMenuPolicy">
-                       <enum>Qt::CustomContextMenu</enum>
-                      </property>
-                      <property name="styleSheet">
-                       <string notr="true">padding: 0px 7px;</string>
-                      </property>
-                      <property name="text">
-                       <string>   Actions</string>
-                      </property>
-                      <property name="icon">
-                       <iconset resource="../resource.qrc">
-                        <normaloff>:/icons/icons/cil-chart.png</normaloff>:/icons/icons/cil-chart.png</iconset>
-                      </property>
-                      <property name="iconSize">
-                       <size>
-                        <width>20</width>
-                        <height>20</height>
-                       </size>
-                      </property>
-                     </widget>
                     </item>
                    </layout>
                   </widget>
